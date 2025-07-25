@@ -72,16 +72,18 @@
 
   <script>
     function formatDate(d) {
-      if (typeof d === 'string' && d.startsWith("Date(")) {
-        const parts = d.match(/\d+/g).map(Number);
-        const y = parts[0];
-        const m = String(parts[1] + 1).padStart(2, '0');
-        const day = String(parts[2]).padStart(2, '0');
-        return `${y}-${m}-${day}`;
-      }
-      return d;
-    }
-
+  if (typeof d === 'string' && d.startsWith("Date(")) {
+    const parts = d.match(/\d+/g).map(Number);
+    const y = parts[0];
+    const m = String(parts[1] + 1).padStart(2, '0');
+    const day = String(parts[2]).padStart(2, '0');
+    return `${y}-${m}-${day}`; // only date, no time
+  }
+  if (typeof d === 'string' && d.includes(' ')) {
+    return d.split(' ')[0]; // just take the date part if it's a string with time
+  }
+  return d;
+  }
     const sheetID = "1TDHFyY3_s4X5hVJFHnrLQwHQdltlVcJEQVN880wd2TI";
     const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
 
