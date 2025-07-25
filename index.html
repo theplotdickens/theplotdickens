@@ -27,36 +27,15 @@
 <p>
 <center><b>News and Things</b></center>
 <p>
-<li>2025 07 23: <a href="https://www.instagram.com/p/DMdM-f8sbGL/" target="_blank">Instagram post promoting two shows (click to go to Instagram)</a> <b>September 3, 2025</b> at Somerville Armory Songwriters Series in Somerville, MA, and <b>September 6, 2025</b> at Bull Run Restaurant in Shirley, MA.</li>
-<p>
-<p>
-<li>2025 07 18: <a href="https://youtu.be/iUJ2dNUVz3U" target="_blank">Video post to Youtube of two new songs (click to go to Youtube)</a> <b>"Little Eyes"</b> and <b>"So It's Come To This"</b> Recorded at Toad Open Mic (at McCarthys) in Cambridge, MA on July 14, 2025.</li>
-<p>
-<p>
-<li>2025 07 15: <a href="https://www.instagram.com/p/DMIVgCZu8Zq/" target="_blank">Instagram video/mini travelogue (click to go to Youtube)</a> reviewing my trip to Boston to climb at North Station CRG and play Toad open mic.
-<p>
-<p>
-<li>2025 07 08: <a href="https://www.instagram.com/p/DL3FYWdSDdC/" target="_blank">Instagram post promoting a show in Winchendon, MA (click to go to Instagram)</a> on Saturday, September 13, 2025. Playing at the 25th anniversary celebration of GALA (Gardner Area League of Artists), a great arts group. Noontime at Old Murdock Senior Center in Winchendon, it's an ice cream social with art displays and live music.
-</body>
-</html>
-<p>
-<p>
-<details>
-  <summary>CLICK HERE TO SEE OLDER POSTS</summary>
-  <ul>
-    (there are no older posts yet, teehee.)
-  </ul>
-</details>
-<p>
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Submissions</title>
+  <title>Submissions with Dropdown No Indent</title>
   <style>
     ul#submissions {
       list-style-type: disc;
       padding-left: 20px;
-      font-family: inherit; /* inherits font from your site */
+      font-family: inherit;
     }
     ul#submissions li {
       margin-bottom: 8px;
@@ -65,48 +44,76 @@
       color: blue;
       text-decoration: underline;
     }
+    #toggleBtn {
+      margin-top: 10px;
+      cursor: pointer;
+      background-color: #eee;
+      border: 1px solid #ccc;
+      padding: 6px 12px;
+      font-family: inherit;
+      font-size: 14px;
+      user-select: none;
+    }
   </style>
 </head>
 <body>
   <ul id="submissions">Loading...</ul>
+  <button id="toggleBtn" style="display:none;">Show More ▼</button>
 
   <script>
-    function formatDate(d) {
-      if (typeof d === 'string' && d.startsWith("Date(")) {
-        const parts = d.match(/\d+/g).map(Number);
-        const y = parts[0];
-        const m = String(parts[1] + 1).padStart(2, '0');
-        const day = String(parts[2]).padStart(2, '0');
-        return `${y}-${m}-${day}`;
-      }
-      if (typeof d === 'string' && d.includes(' ')) {
-        return d.split(' ')[0];
-      }
-      return d;
-    }
-
     const sheetID = "1TDHFyY3_s4X5hVJFHnrLQwHQdltlVcJEQVN880wd2TI";
     const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
 
     fetch(sheetURL)
       .then(res => res.text())
       .then(text => {
-        const json = JSON.parse(text.substr(47).slice(0, -2));
+        const json = JSON.parse(text.substring(47, text.length - 2));
         const rows = json.table.rows;
         const list = document.getElementById("submissions");
+        const toggleBtn = document.getElementById("toggleBtn");
         list.innerHTML = "";
 
-        rows.forEach(row => {
-          // Use formatted date if available, else parse raw value
-          const date = row.c[0]?.f || formatDate(row.c[0]?.v || "");
-          const linkText = row.c[1]?.v || "";
+        // Show first two normally
+        rows.slice(0, 2).forEach(row => {
+          const rawDate = row.c[1]?.f || "";
+          const date = rawDate.split(' ')[0];
           const linkURL = row.c[2]?.v || "";
-          const desc = row.c[3]?.v || "";
-
+          const linkText = row.c[3]?.v || "";
+          const desc = row.c[4]?.v || "";
           const li = document.createElement("li");
-          li.innerHTML = `${date} — <a href="${linkURL}" target="_blank">${linkText}</a> — ${desc}`;
+          li.innerHTML = `${date} <a href="${linkURL}" target="_blank" rel="noopener noreferrer">${linkText}</a> ${desc}`;
           list.appendChild(li);
         });
+
+        if (rows.length > 2) {
+          const hiddenDiv = document.createElement("div");
+          hiddenDiv.style.display = "none";
+
+          // Append li directly to the hidden div (no nested ul)
+          rows.slice(2).forEach(row => {
+            const rawDate = row.c[1]?.f || "";
+            const date = rawDate.split(' ')[0];
+            const linkURL = row.c[2]?.v || "";
+            const linkText = row.c[3]?.v || "";
+            const desc = row.c[4]?.v || "";
+            const li = document.createElement("li");
+            li.innerHTML = `${date} <a href="${linkURL}" target="_blank" rel="noopener noreferrer">${linkText}</a> ${desc}`;
+            hiddenDiv.appendChild(li);
+          });
+
+          list.appendChild(hiddenDiv);
+
+          toggleBtn.style.display = "inline-block";
+          toggleBtn.onclick = () => {
+            if (hiddenDiv.style.display === "none") {
+              hiddenDiv.style.display = "block";
+              toggleBtn.textContent = "Show Less ▲";
+            } else {
+              hiddenDiv.style.display = "none";
+              toggleBtn.textContent = "Show More ▼";
+            }
+          };
+        }
       })
       .catch(err => {
         document.getElementById("submissions").innerText = "Failed to load data.";
