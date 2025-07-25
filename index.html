@@ -54,9 +54,9 @@
   <title>Submissions</title>
   <style>
     ul#submissions {
-      list-style-type: disc; /* normal bullet */
+      list-style-type: disc;
       padding-left: 20px;
-      font-family: sans-serif;
+      font-family: inherit; /* inherits font from your site */
     }
     ul#submissions li {
       margin-bottom: 8px;
@@ -72,18 +72,19 @@
 
   <script>
     function formatDate(d) {
-  if (typeof d === 'string' && d.startsWith("Date(")) {
-    const parts = d.match(/\d+/g).map(Number);
-    const y = parts[0];
-    const m = String(parts[1] + 1).padStart(2, '0');
-    const day = String(parts[2]).padStart(2, '0');
-    return `${y}-${m}-${day}`; // only date, no time
-  }
-  if (typeof d === 'string' && d.includes(' ')) {
-    return d.split(' ')[0]; // just take the date part if it's a string with time
-  }
-  return d;
-  }
+      if (typeof d === 'string' && d.startsWith("Date(")) {
+        const parts = d.match(/\d+/g).map(Number);
+        const y = parts[0];
+        const m = String(parts[1] + 1).padStart(2, '0');
+        const day = String(parts[2]).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      }
+      if (typeof d === 'string' && d.includes(' ')) {
+        return d.split(' ')[0];
+      }
+      return d;
+    }
+
     const sheetID = "1TDHFyY3_s4X5hVJFHnrLQwHQdltlVcJEQVN880wd2TI";
     const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
 
@@ -96,7 +97,8 @@
         list.innerHTML = "";
 
         rows.forEach(row => {
-          const date = formatDate(row.c[0]?.f || row.c[0]?.v || "");
+          // Use formatted date if available, else parse raw value
+          const date = row.c[0]?.f || formatDate(row.c[0]?.v || "");
           const linkText = row.c[1]?.v || "";
           const linkURL = row.c[2]?.v || "";
           const desc = row.c[3]?.v || "";
