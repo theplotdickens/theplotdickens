@@ -50,11 +50,38 @@
 <p>
 <!DOCTYPE html>
 <html>
-<head><title>Sheet Test</title></head>
+<head>
+  <title>Submissions</title>
+  <style>
+    ul#submissions {
+      list-style-type: disc; /* normal bullet */
+      padding-left: 20px;
+      font-family: monospace, monospace;
+    }
+    ul#submissions li {
+      margin-bottom: 8px;
+    }
+    ul#submissions li a {
+      color: blue;
+      text-decoration: underline;
+    }
+  </style>
+</head>
 <body>
   <ul id="submissions">Loading...</ul>
 
   <script>
+    function formatDate(d) {
+      if (typeof d === 'string' && d.startsWith("Date(")) {
+        const parts = d.match(/\d+/g).map(Number);
+        const y = parts[0];
+        const m = String(parts[1] + 1).padStart(2, '0');
+        const day = String(parts[2]).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+      }
+      return d;
+    }
+
     const sheetID = "1TDHFyY3_s4X5hVJFHnrLQwHQdltlVcJEQVN880wd2TI";
     const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
 
@@ -67,7 +94,7 @@
         list.innerHTML = "";
 
         rows.forEach(row => {
-          const date = row.c[0]?.v || "";
+          const date = formatDate(row.c[0]?.f || row.c[0]?.v || "");
           const linkText = row.c[1]?.v || "";
           const linkURL = row.c[2]?.v || "";
           const desc = row.c[3]?.v || "";
