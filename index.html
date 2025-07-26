@@ -93,7 +93,7 @@ ul#submissions li a:hover {
         list.innerHTML = "";
 
         // Show first three normally
-        rows.slice(0, 2).forEach(row => {
+        rows.slice(0, 3).forEach(row => {
           const rawDate = row.c[1]?.f || "";
           const date = rawDate.split(' ')[0];
           const linkURL = row.c[2]?.v || "";
@@ -104,7 +104,7 @@ ul#submissions li a:hover {
           list.appendChild(li);
         });
 
-        if (rows.length > 2) {
+        if (rows.length > 3) {
           const hiddenDiv = document.createElement("div");
           hiddenDiv.style.display = "none";
 
