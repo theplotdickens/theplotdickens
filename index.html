@@ -92,7 +92,7 @@ ul#submissions li a:hover {
         const toggleBtn = document.getElementById("toggleBtn");
         list.innerHTML = "";
 
-        // Show first two normally
+        // Show first three normally
         rows.slice(0, 2).forEach(row => {
           const rawDate = row.c[1]?.f || "";
           const date = rawDate.split(' ')[0];
