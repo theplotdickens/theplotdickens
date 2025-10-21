@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>www.theplotdickens.com</title>
   <style>
     body {
@@ -11,6 +10,17 @@
       background: #f9f9f9; 
       color: #222; 
     }
+    
+    h1, h2 {
+        font-family: sans-serif; 
+    }
+    
+    pre {
+        text-align: center;
+        font-family: sans-serif; 
+        white-space: pre-wrap;
+    }
+    
     a {
       display: inline;
       margin: 0.5em 0;
@@ -39,63 +49,96 @@
       cursor: pointer;    
     }
 
-    /* === MOUSEOVER TOOLTIP CSS (Minimal Styling for Inheritance) === */
     .tooltip-wrapper {
-        position: relative; /* REQUIRED: Anchor for the tooltip */
-        cursor: help; /* Makes mouse pointer change */
-        
-        /* Only visual change: subtle dotted underline */
+        position: relative; 
+        cursor: help; 
         text-decoration: underline dotted;
         text-underline-offset: 4px;
-        
-        /* IMPORTANT: NO font-weight or color rules, ensuring it inherits color: #222 and font-family: sans-serif from the parent */
     }
 
     .tooltip-wrapper::after {
-        content: attr(data-tooltip); /* Gets the mouseover text */
+        content: attr(data-tooltip); 
+        
         position: absolute;
         bottom: 150%;
         left: 50%;
         transform: translateX(-50%); 
 
-        /* Tooltip Box Styling */
-        background-color: #444; /* Dark gray box */
-        color: white;
+        background-color: #FFFFFF; 
+        color: black;
         padding: 4px 8px;
         border-radius: 4px;
         white-space: nowrap; 
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         z-index: 100;
-
-        /* Hiding properties */
+        
         visibility: hidden;
         opacity: 0;
         transition: opacity 0.2s ease-in-out; 
     }
 
     .tooltip-wrapper:hover::after {
-        /* Showing properties on hover */
         visibility: visible;
         opacity: 1;
     }
-    /* === MOUSEOVER TOOLTIP CSS END === */
   </style>
 </head>
 <body>
   <center><h1>www.theplotdickens.com</h1></center>
-  <!-- Link is correctly bold and green -->
   <center><strong><a href="https://theplotdickens.github.io/theplotdickens/">go back to main page</a></strong></center>
   <center><h2> "Big Fish"<h2></center>
-  <center>
-        spent a whole night driving <span class="tooltip-wrapper" data-tooltip="Irresponsible, but fun.">drunk</span>
-        
-        on life
-  <center>with open hearts and open minds
-  <center>you gunned that engine til the morning light
-  <center>til I crashed in the back of that beat up car
-  <center>parked in the back of some lowly farm
-  <center>while you and your girl of the week
-  <center>slept under the disappearing stars
-  </center>
+    
+    <pre>
+written 2012    
+    
+spent a whole night driving drunkon life
+with open hearts and open minds
+you gunned that engine til the morning light
+
+til I crashed in the back of that <span class="tooltip-wrapper" data-tooltip="a dinged up toyota celica">beat up car</span>
+parked in the back of some <span class="tooltip-wrapper" data-tooltip="a field on Murdock farm in Winchendon, MA, with a postcard view of the sunrise">lowly farm</span>
+while you and your girl of the week
+slept under the disappearing stars
+
+til I awoke to the sound of the radios
+on the hips of some cops tapping on my window
+who asked if we were homeless, we said we don't know
+
+so they shooed us away and said "take care now"
+and we made our way back to my mother's house
+and I slept alone save for a nasty case of <span class="tooltip-wrapper" data-tooltip="tooth sweaters. ick">morning mouth</span>
+
+and then I dreamt of a life I spent on the road
+with nothing but some shoes and clothes
+a liquored up version of what we know
+
+til I came to in the afternoon
+I scratched my head <span class="tooltip-wrapper" data-tooltip="psalm 46:10">sat still and knew</span>
+to chase that life I dreamt I'd have to be a fool
+
+cause although it's easy to be a big fish
+in a puddle of a town
+I'd like to think I've been learning how to swim
+so when I leave here I don't drown
+
+<span class="tooltip-wrapper" data-tooltip="psych ward hangs">but all my friends have watched me flounder</span>
+<span class="tooltip-wrapper" data-tooltip="disappearing from my central street crew">splash off the face of the earth</span>
+but I know how they've all been there
+thank god when they learn how to surf
+
+so I went back to my friends that night
+<span class="tooltip-wrapper" data-tooltip="my dad's favorite line of mine">I shared my theories thrice revised</span>
+I caught a glimmer in their bloodshot eyes
+
+and those two sure are hard nuts to crack
+but I think that I hit them with a fact
+that life around here really aint all bad
+
+no life around here really ain't all bad
+and if you go looking for a bad time
+then it's probably what you'll have
+<span class="tooltip-wrapper" data-tooltip="a song for my winch townies of 2010, bless.">cause life around here really ain't all bad</span>
+    </pre>
+    
 </body>
 </html>
