@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>www.theplotdickens.com</title>
+  <style>
+    body {
+      font-family: sans-serif; /* REVERTED TO ORIGINAL sans-serif ONLY */
+      padding: 2em;
+      background: #f9f9f9; 
+      color: #222; 
+    }
+    a {
+      display: inline;
+      margin: 0.5em 0;
+      color: green; 
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    ul {
+      list-style-type: disc;
+      padding-left: 1.5em;
+      margin-left: 0;
+    }
+    li {
+      text-align: left;
+    }
+    #submissions li {
+      margin-bottom: 0.75em; 
+      line-height: 1.4;      
+    }
+    #toggleBtn {
+      font-size: 1.2em;   
+      font-weight: bold;  
+      padding: 0.3em 0.6em; 
+      cursor: pointer;    
+    }
+
+    /* === MOUSEOVER TOOLTIP CSS (Minimal Styling for Inheritance) === */
+    .tooltip-wrapper {
+        position: relative; /* REQUIRED: Anchor for the tooltip */
+        cursor: help; /* Makes mouse pointer change */
+        
+        /* Only visual change: subtle dotted underline */
+        text-decoration: underline dotted;
+        text-underline-offset: 4px;
+        
+        /* IMPORTANT: NO font-weight or color rules, ensuring it inherits color: #222 and font-family: sans-serif from the parent */
+    }
+
+    .tooltip-wrapper::after {
+        content: attr(data-tooltip); /* Gets the mouseover text */
+        position: absolute;
+        bottom: 150%;
+        left: 50%;
+        transform: translateX(-50%); 
+
+        /* Tooltip Box Styling */
+        background-color: #444; /* Dark gray box */
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        white-space: nowrap; 
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        z-index: 100;
+
+        /* Hiding properties */
+        visibility: hidden;
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out; 
+    }
+
+    .tooltip-wrapper:hover::after {
+        /* Showing properties on hover */
+        visibility: visible;
+        opacity: 1;
+    }
+    /* === MOUSEOVER TOOLTIP CSS END === */
+  </style>
+</head>
+<body>
+  <center><h1>www.theplotdickens.com</h1></center>
+  <!-- Link is correctly bold and green -->
+  <center><strong><a href="https://theplotdickens.github.io/theplotdickens/">go back to main page</a></strong></center>
+  <center><h2> "Big Fish"<h2></center>
+  <center>
+        spent a whole night driving <span class="tooltip-wrapper" data-tooltip="Irresponsible, but fun.">drunk</span>
+        
+        on life
+  <center>with open hearts and open minds
+  <center>you gunned that engine til the morning light
+  <center>til I crashed in the back of that beat up car
+  <center>parked in the back of some lowly farm
+  <center>while you and your girl of the week
+  <center>slept under the disappearing stars
+  </center>
+</body>
+</html>
