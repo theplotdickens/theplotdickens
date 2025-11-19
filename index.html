@@ -59,7 +59,9 @@
     <!-- WEBSITE UPDATED WHEN -->
     <!-- WEBSITE UPDATED WHEN -->
     <!-- WEBSITE UPDATED WHEN -->
-  <center><i><u>Website updated 2025 11 13 </u></i></center>
+   <br>
+  <center><i><u>Website updated 2025 11 19 </u></i></center>
+   <br>
     <!-- WEBSITE UPDATED WHEN -->
     <!-- WEBSITE UPDATED WHEN -->
     <!-- WEBSITE UPDATED WHEN -->
@@ -72,19 +74,97 @@
   <center><span style="font-size: 1.7em;"><b>Shows</b></span></center>
     <center><a href="https://theplotdickens.github.io/theplotdickens/pastshows.html">(Click to see past shows on a new page)</a></center>
 <p>
-  <p>
-  <ul>
-    <p>
-    <li>Saturday, December 13, 2025: <a href="https://www.instagram.com/thirstyrobotbrewing">Thirsty Robot Brewing Company</a> in Fitchburg, MA. 265 Summer Street. 6pm </li>
-    <p>
-    <li>Sunday, January 4, 2026: <a href="https://www.instagram.com/floodwaterbrewingco/">Floodwater Brewing Company</a> in Shelburne Falls, MA. 40 State Street. Playing at 3pm with Maki Matsui. </li>
-    <p>
-    <li>Sunday, February 1, 2026: <a href="https://wcuw.org/community/frontroom/">WUCW Front Room</a> in Worcester, MA. 910 Main Street. </li>
-    <p>
-    <li>Thursday, March 26, 2026: <a href="https://www.fitzpatrickcollaborative.org/">Fitzpatrick Collaborative</a> in Pepperell, MA, 45 Main Street. Playing as a part of their new coffeehouse series. </li>
-    <p>
-  </ul>
+  <h3 style="text-align: center; font-size: 1.7em;"><b></b></h2> 
+
+<ul id="show-listings">Loading...</ul>
+
+<style>
+#show-listings {
+    padding-left: 1.5em; 
+    list-style-type: disc; 
+    font-size: 1em; 
+}
+
+#show-listings li {
+    margin-bottom: 12px; 
+    font-size: 1em; 
+}
+</style>
+
+<script>
+    const showSheetID = "1DA3Vhr9ntcqMpl0uOTmHR639f5UImxB2XXbFpWZx0QU";
+    const sheetURL = `https://docs.google.com/spreadsheets/d/${showSheetID}/gviz/tq?tqx=out:json`;
+
+    fetch(sheetURL)
+      .then(res => res.text())
+      .then(text => {
+        let jsonText;
+        
+        try {
+            const match = text.match(/google\.visualization\.Query\.setResponse\((.*)\)/);
+            if (match && match[1]) {
+                jsonText = match[1];
+            } else {
+                jsonText = text.substring(47, text.length - 2);
+            }
+
+            const json = JSON.parse(jsonText);
+            const allRows = json.table.rows;
+            
+            const list = document.getElementById("show-listings"); 
+            list.innerHTML = ""; 
+
+            const displayRows = allRows.slice(0, 20);
+
+            const createShowListItem = (row) => {
+              let showDate = row.c[1]?.v;
+              let formattedDate = "Date TBD";
+              
+              if (showDate) {
+                  const dateParts = showDate.match(/Date\((\d+),(\d+),(\d+)/); 
+                  if (dateParts) {
+                      const year = parseInt(dateParts[1]);
+                      const month = parseInt(dateParts[2]);
+                      const day = parseInt(dateParts[3]);
+
+                      const dateObj = new Date(year, month, day); 
+
+                      const options = { 
+                          weekday: 'long', 
+                          year: 'numeric', 
+                          month: 'long', 
+                          day: 'numeric' 
+                      };
+                      
+                      formattedDate = dateObj.toLocaleDateString('en-US', options) + ":";
+                  }
+              }
+
+              const showInfo = row.c[2]?.v || "No Show Info"; 
+              
+              const li = document.createElement("li");
+              li.innerHTML = `<b>${formattedDate}</b> ${showInfo}`;
+              return li;
+            };
+
+            if (displayRows.length > 0) {
+              displayRows.forEach(row => {
+                list.appendChild(createShowListItem(row));
+              });
+            } else {
+              list.innerHTML = "<li>No show entries found yet.</li>";
+            }
+            
+        } catch (e) {
+            document.getElementById("show-listings").innerText = "Error parsing show data.";
+        }
+      })
+      .catch(err => {
+        document.getElementById("show-listings").innerText = "Failed to load show data.";
+      });
+</script>
 <p>
+<br>
   <!-- MUSIC MUSIC MUSIC MUSIC -->
   <!-- MUSIC MUSIC MUSIC MUSIC -->
   <!-- MUSIC MUSIC MUSIC MUSIC -->
@@ -99,68 +179,84 @@
     <li>2016 06 18: <a href="https://briandickens.bandcamp.com/album/and-the-plot-dickens-2016">"AND THE PLOT DICKENS"</a>. Click for the bandcamp link. Recorded in early 2016 at Ian Galipeau's home studio in Keene, NH. Ian Galipeau on drums, bass, electric guitar and banjo. My first full band album, I love this album a lot and I am thankful to everyone involved. Album artwork by Madison Pierce.</li>
   </ul>
 
+<br>
 <center><span style="font-size: 1.7em;"><b>Annotated Songs **new**</b></span></center>  
 <center><a href="https://theplotdickens.github.io/theplotdickens/bigfish">Big Fish</a></center>
   <p>
+  <br>
   
   <center><span style="font-size: 1.7em;"><b>News and Media</b></span></center>
-  <p>
+  <ul id="submissions">Loading...</ul>
+  <button id="toggleBtn" style="display:none;">★Click to show or hide older news and media★</button>
 
-  <ul id="submissions">Loading...</ul>
-  <button id="toggleBtn" style="display:none;">★Click to show or hide older news and media★</button>
+  <script>
+    (function() { // Start of IIFE - Creates isolated scope
+        const sheetID = "1TDHFyY3_s4X5hVJFHnrLQwHQdltlVcJEQVN880wd2TI";
+        const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
 
-  <script>
-    const sheetID = "1TDHFyY3_s4X5hVJFHnrLQwHQdltlVcJEQVN880wd2TI";
-    const sheetURL = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
+        fetch(sheetURL)
+          .then(res => res.text())
+          .then(text => {
+                let jsonText;
+                let json;
+                
+                try {
+                    const match = text.match(/google\.visualization\.Query\.setResponse\((.*)\)/);
+                    if (match && match[1]) {
+                        jsonText = match[1];
+                    } else {
+                        jsonText = text.substring(47, text.length - 2);
+                    }
+                    
+                    json = JSON.parse(jsonText);
+                } catch (e) {
+                    document.getElementById("submissions").innerText = "Error loading news and media data.";
+                    return; 
+                }
 
-    fetch(sheetURL)
-      .then(res => res.text())
-      .then(text => {
-        const json = JSON.parse(text.substring(47, text.length - 2));
-        const rows = json.table.rows;
-        const list = document.getElementById("submissions");
-        const toggleBtn = document.getElementById("toggleBtn");
-        list.innerHTML = "";
+            const rows = json.table.rows;
+            const list = document.getElementById("submissions");
+            const toggleBtn = document.getElementById("toggleBtn");
+            list.innerHTML = "";
+            
+            const createMediaListItem = (row) => {
+                const date = row.c[1]?.f?.split(' ')[0] || "";
+                const linkURL = row.c[2]?.v || "";
+                const linkText = row.c[3]?.v || "";
+                const desc = row.c[4]?.v || "";
+                const li = document.createElement("li");
+                li.innerHTML = `${date} <a href="${linkURL}" target="_blank" rel="noopener noreferrer">${linkText}</a> ${desc}`;
+                return li;
+            };
 
-        rows.slice(0, 2).forEach(row => {
-          const rawDate = row.c[1]?.f || "";
-          const date = rawDate.split(' ')[0];
-          const linkURL = row.c[2]?.v || "";
-          const linkText = row.c[3]?.v || "";
-          const desc = row.c[4]?.v || "";
-          const li = document.createElement("li");
-          li.innerHTML = `${date} <a href="${linkURL}" target="_blank" rel="noopener noreferrer">${linkText}</a> ${desc}`;
-          list.appendChild(li);
-        });
+            rows.slice(0, 2).forEach(row => {
+              list.appendChild(createMediaListItem(row));
+            });
 
-        if (rows.length > 2) {
-          const hiddenDiv = document.createElement("div");
-          hiddenDiv.style.display = "none";
+            if (rows.length > 2) {
+              const hiddenDiv = document.createElement("div");
+              hiddenDiv.style.display = "none";
 
-          rows.slice(2).forEach(row => {
-            const rawDate = row.c[1]?.f || "";
-            const date = rawDate.split(' ')[0];
-            const linkURL = row.c[2]?.v || "";
-            const linkText = row.c[3]?.v || "";
-            const desc = row.c[4]?.v || "";
-            const li = document.createElement("li");
-            li.innerHTML = `${date} <a href="${linkURL}" target="_blank" rel="noopener noreferrer">${linkText}</a> ${desc}`;
-            hiddenDiv.appendChild(li);
+              rows.slice(2).forEach(row => {
+                hiddenDiv.appendChild(createMediaListItem(row));
+              });
+
+              list.appendChild(hiddenDiv);
+
+              toggleBtn.style.display = "inline-block";
+              toggleBtn.onclick = () => {
+                hiddenDiv.style.display = hiddenDiv.style.display === "none" ? "block" : "none";
+                toggleBtn.innerText = hiddenDiv.style.display === "none" 
+                  ? "★Click to show or hide older news and media★" 
+                  : "★Click to hide older news and media★";
+              };
+            }
+          })
+          .catch(err => {
+            document.getElementById("submissions").innerText = "Failed to load media data.";
           });
-
-          list.appendChild(hiddenDiv);
-
-          toggleBtn.style.display = "inline-block";
-          toggleBtn.onclick = () => {
-            hiddenDiv.style.display = hiddenDiv.style.display === "none" ? "block" : "none";
-          };
-        }
-      })
-      .catch(err => {
-        document.getElementById("submissions").innerText = "Failed to load data.";
-        console.error(err);
-      });
-  </script>
+    })(); // End of IIFE
+  </script>
 
   <center>
     <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdp_o-zoJobHNETJfFITs7Fem8e3-fs-bHVDp5n7BGpizrbZA/viewform?embedded=true"
