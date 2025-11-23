@@ -1,1 +1,872 @@
-test
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brian Gets Fit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for drawing the mini-graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f7f7; }
+        .day-card {
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 4px solid #4f46e5;
+        }
+        .day-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px -2px rgba(0, 0, 0, 0.1);
+        }
+        /* Trend color classes for descriptive text */
+        .text-green-600 { color: #059669; } 
+        .text-red-600 { color: #dc2626; } 
+        .text-gray-600 { color: #4b5563; }
+        .metric-card {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .metric-card:hover {
+            box-shadow: 0 6px 12px -4px rgba(79, 70, 229, 0.2);
+            background-color: #eef2ff; /* indigo-50 hover */
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8">
+
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-xl shadow-2xl">
+        <h1 class="text-3xl font-bold text-center mb-10 text-indigo-700">Brian Gets Fit</h1>
+        
+        <!-- Updated grid for 5 cards: 2 columns on mobile, 3 on small tablets, 5 on larger screens -->
+        <div id="metricContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-10">
+            
+            <!-- Star Day Metric - Clickable Card -->
+            <div class="metric-card bg-indigo-50 p-4 rounded-xl shadow-md text-center border-b-4 border-indigo-500 flex flex-col justify-between" onclick="openChartModal('STAR_DAY')">
+                <div>
+                    <p class="text-sm font-medium text-indigo-700">Avg. Star Rating (30 Days)</p>
+                    <p id="metricStarDay" class="text-3xl font-bold text-gray-800 mt-1">...</p>
+                </div>
+                <p id="metricStarDayTrend" class="text-xs mt-2 text-center h-auto min-h-10"></p>
+            </div>
+
+            <!-- Steps Metric - Clickable Card -->
+            <div class="metric-card bg-indigo-50 p-4 rounded-xl shadow-md text-center border-b-4 border-indigo-500 flex flex-col justify-between" onclick="openChartModal('STEPS')">
+                <div>
+                    <p class="text-sm font-medium text-indigo-700">Steps Success % (30 Days)</p>
+                    <p id="metricSteps" class="text-3xl font-bold text-gray-800 mt-1">...</p>
+                </div>
+                <p id="metricStepsTrend" class="text-xs mt-2 text-center h-auto min-h-10"></p>
+            </div>
+            <!-- CICO Metric - Clickable Card -->
+            <div class="metric-card bg-indigo-50 p-4 rounded-xl shadow-md text-center border-b-4 border-indigo-500 flex flex-col justify-between" onclick="openChartModal('CICO')">
+                 <div>
+                    <p class="text-sm font-medium text-indigo-700">CICO Success % (30 Days)</p>
+                    <p id="metricCICO" class="text-3xl font-bold text-gray-800 mt-1">...</p>
+                </div>
+                <p id="metricCICOTrend" class="text-xs mt-2 text-center h-auto min-h-10"></p>
+            </div>
+            <!-- Activity Metric - Clickable Card -->
+            <div class="metric-card bg-indigo-50 p-4 rounded-xl shadow-md text-center border-b-4 border-indigo-500 flex flex-col justify-between" onclick="openChartModal('ACTIVITY')">
+                <div>
+                    <p class="text-sm font-medium text-indigo-700">Activity Count (7 Days)</p>
+                    <p id="metricActivity" class="text-3xl font-bold text-gray-800 mt-1">...</p>
+                </div>
+                <p id="metricActivityTrend" class="text-xs mt-2 text-center h-auto min-h-10"></p>
+            </div>
+            <!-- Weight Metric - Clickable Card -->
+            <div class="metric-card bg-indigo-50 p-4 rounded-xl shadow-md text-center border-b-4 border-indigo-500 flex flex-col justify-between" onclick="openChartModal('WEIGHT')">
+                <div>
+                    <p class="text-sm font-medium text-indigo-700">Latest Weight (lbs)</p>
+                    <p id="metricWeight" class="text-3xl font-bold text-gray-800 mt-1">...</p>
+                </div>
+                <p id="metricWeightTrend" class="text-xs mt-2 text-center h-auto min-h-10"></p>
+            </div>
+        </div>
+
+        <p class="text-center text-gray-500 mb-6 border-t pt-6">Click any date below to view all responses submitted on that day.</p>
+
+        <div id="responseListContainer" class="space-y-4">
+        </div>
+
+        <p id="statusMessage" class="text-center mt-6 text-sm text-gray-600">Loading data...</p>
+
+        <!-- Daily Submissions Modal -->
+        <div id="responseModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center p-4 transition-opacity duration-300 z-40">
+            <div class="bg-white rounded-xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 sm:p-8 relative transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+                <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+                <h3 id="modalDate" class="text-2xl font-bold mb-4 text-indigo-600"></h3>
+                <div id="responsesContainer" class="space-y-6">
+                </div>
+            </div>
+        </div>
+
+        <!-- Chart Modal Structure (New) -->
+        <div id="chartModal" class="fixed inset-0 bg-gray-900 bg-opacity-75 hidden items-center justify-center p-4 transition-opacity duration-300 z-50">
+            <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] p-6 sm:p-8 relative transform transition-all duration-300 scale-95 opacity-0" id="chartModalContent">
+                <button onclick="closeChartModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+                <h3 id="chartModalTitle" class="text-2xl font-bold mb-4 text-indigo-600">30-Day Trend</h3>
+                <div class="relative h-64 w-full">
+                    <canvas id="miniChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const SPREADSHEET_ID = '1VESrraABobumjFVerhSrCpXizVrZMPNy-AOcbI_2h4Y';
+        const GID = '635546566';
+        const DATA_URL = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&gid=${GID}`;
+
+        const COLUMN_INDICES = {
+            STAR_DAY: 2,  // Column C (Star Rating, 1-10)
+            STEPS: 3,     
+            CICO: 4,      
+            ACTIVITY: 8,  
+            WEIGHT: 9     
+        };
+
+        let columnHeaders = {}; 
+        let allResponses = {}; 
+        const metricStarDay = document.getElementById('metricStarDay');
+        const metricStarDayTrend = document.getElementById('metricStarDayTrend');
+        const metricSteps = document.getElementById('metricSteps');
+        const metricCICO = document.getElementById('metricCICO');
+        const metricActivity = document.getElementById('metricActivity');
+        const metricWeight = document.getElementById('metricWeight');
+        const metricStepsTrend = document.getElementById('metricStepsTrend');
+        const metricCICOTrend = document.getElementById('metricCICOTrend');
+        const metricActivityTrend = document.getElementById('metricActivityTrend');
+        const metricWeightTrend = document.getElementById('metricWeightTrend');
+        const responseListContainer = document.getElementById('responseListContainer');
+        const statusMessage = document.getElementById('statusMessage');
+        const responseModal = document.getElementById('responseModal');
+        const modalContent = document.getElementById('modalContent');
+        
+        // Chart variables
+        let currentChart = null;
+        const chartModal = document.getElementById('chartModal');
+        const chartModalContent = document.getElementById('chartModalContent');
+
+        // Periods for calculation
+        const LONG_PERIOD = 30; // Used for main percentage display and charts
+        const SHORT_PERIOD = 7; // Used for trend comparison
+        const LOOKBACK_DAYS = 60; 
+
+        const fetchSheetData = async () => {
+            statusMessage.textContent = 'Loading data...';
+            statusMessage.classList.remove('hidden', 'text-red-500');
+            responseListContainer.innerHTML = '';
+            
+            try {
+                const response = await fetch(DATA_URL);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                const rawText = await response.text();
+                
+                const jsonMatch = rawText.match(/google.visualization.Query.setResponse\((.*)\)/);
+                if (!jsonMatch || jsonMatch.length < 2) throw new Error("API response format error.");
+                
+                const data = JSON.parse(jsonMatch[1]);
+                
+                data.table.cols.forEach((col, index) => {
+                    columnHeaders[index] = col.label;
+                });
+
+                data.table.rows.forEach(row => {
+                    const rawTimestamp = row.c[0]?.v; 
+                    if (!rawTimestamp) return; 
+
+                    const dateMatch = rawTimestamp.match(/Date\((\d+),(\d+),(\d+),/);
+                    if (!dateMatch) return;
+
+                    const year = parseInt(dateMatch[1], 10);
+                    const month = parseInt(dateMatch[2], 10);
+                    const day = parseInt(dateMatch[3], 10);
+                    
+                    const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+
+                    const rowResponses = {};
+                    row.c.forEach((cell, index) => {
+                        const header = columnHeaders[index];
+                        const value = cell ? (cell.f || cell.v) : null; 
+                        if (header && value !== null) {
+                            rowResponses[header] = value;
+                        }
+                    });
+
+                    if (!allResponses[dateKey]) {
+                        allResponses[dateKey] = [];
+                    }
+                    allResponses[dateKey].push(rowResponses);
+                });
+
+                renderDashboard();
+                renderResponseList();
+
+            } catch (error) {
+                console.error("Failed to load sheet data:", error);
+                statusMessage.textContent = 'Error loading data. Check SPREADSHEET_ID, GID, and ensure the sheet is published to the web.';
+                statusMessage.classList.add('text-red-500');
+            }
+        };
+
+        function calculatePercentage(responses, header, successCondition) {
+            if (responses.length === 0) return 0;
+            
+            // Filter responses to only count unique days where the goal was met at least once.
+            const uniqueGoalDays = new Set();
+            
+            responses.forEach(res => {
+                const rawValue = res[header];
+                if (rawValue === undefined || rawValue === null || rawValue === '') return;
+                
+                // Only WEIGHT and STAR_DAY are treated as numeric now.
+                const isNumericGoal = (header === columnHeaders[COLUMN_INDICES.WEIGHT] || header === columnHeaders[COLUMN_INDICES.STAR_DAY]); 
+
+                let goalMet = false;
+                
+                if (isNumericGoal) {
+                    const numericValue = parseFloat(rawValue);
+                    if (!isNaN(numericValue) && successCondition(numericValue)) {
+                        goalMet = true;
+                    }
+                } else { 
+                    // This covers Steps, CICO, and Activity (string checks)
+                    if (successCondition(rawValue.toString().trim())) {
+                         goalMet = true;
+                    }
+                }
+
+                if (goalMet) {
+                    // Using the full response object as a unique identifier for simplicity
+                    uniqueGoalDays.add(JSON.stringify(res)); 
+                }
+            });
+
+            // The denominator should be the number of unique days included in the 'responses' array.
+            const totalDays = responses.length; 
+            if (totalDays === 0) return 0;
+
+            const goalMetCount = uniqueGoalDays.size;
+
+            return Math.round((goalMetCount / totalDays) * 100);
+        }
+
+        // Function to report status of the last recorded day (used as fallback for trend)
+        function getLastDayStatus(lastValue, header, successCondition) {
+            let trendClass = 'text-gray-600';
+            let statusText = 'No entry recorded.';
+
+            if (lastValue === undefined || lastValue === null || lastValue === '') {
+                return `<span class="${trendClass}">${statusText}</span>`;
+            }
+
+            let isSuccess = false;
+            let displayValue = lastValue;
+            
+            const isNumericGoal = (header === columnHeaders[COLUMN_INDICES.WEIGHT] || header === columnHeaders[COLUMN_INDICES.STAR_DAY]); 
+            
+            if (isNumericGoal) {
+                const numericValue = parseFloat(lastValue);
+                if (!isNaN(numericValue)) {
+                    // Success condition is only meaningful for Weight (but included for completeness)
+                    isSuccess = successCondition(numericValue); 
+                    displayValue = numericValue.toFixed(header === columnHeaders[COLUMN_INDICES.WEIGHT] ? 1 : 0);
+                    
+                    statusText = header === columnHeaders[COLUMN_INDICES.STAR_DAY] 
+                        ? `Last rating: ${displayValue} stars.`
+                        : `Last entry: ${isSuccess ? 'SUCCESS' : 'MISSED'} (${displayValue})`;
+                } else {
+                    statusText = `Last entry: Invalid number.`;
+                }
+            } else { // Steps, CICO (as string), Activity (string checks)
+                isSuccess = successCondition(lastValue.toString().trim());
+                displayValue = lastValue.toString().trim();
+                
+                statusText = isSuccess 
+                    ? `Last entry: Goal MET (${displayValue}).`
+                    : `Last entry: Goal NOT MET (${displayValue}).`;
+            }
+
+            // Only use trend colors for binary success/fail metrics or actual weight loss
+            trendClass = (header === columnHeaders[COLUMN_INDICES.STEPS] || header === columnHeaders[COLUMN_INDICES.CICO]) && isSuccess ? 'text-green-600 font-semibold' : 'text-gray-600';
+            
+            return `<span class="${trendClass}">${statusText}</span>`;
+        }
+        
+        // Function to compare 7-day success vs. previous 7-day success
+        function getTrendDescription(currentValue, previousValue, isPositiveTrendHigher) {
+            const diff = currentValue - previousValue;
+            const absDiff = Math.abs(diff);
+            let direction = 'stable';
+            let trendClass = 'text-gray-600';
+            let unit = isPositiveTrendHigher ? '%' : 'lbs';
+
+            if (absDiff < (isPositiveTrendHigher ? 2 : 0.2)) { 
+                return `<span class="${trendClass}">Trend is stable compared to the previous week.</span>`;
+            }
+            
+            let isGoodTrend = isPositiveTrendHigher ? (diff > 0) : (diff < 0);
+            
+            if (isGoodTrend) {
+                direction = `improving`;
+                trendClass = 'text-green-600 font-semibold';
+            } else { 
+                direction = `declining`;
+                trendClass = 'text-red-600 font-semibold';
+            }
+
+            return `<span class="${trendClass}">The 7-day trend is ${direction} (${absDiff.toFixed(1)}${unit}).</span>`;
+        }
+
+        // Helper function to calculate average for Star Day (or other numeric metrics)
+        function calculateAverage(responses, header) {
+            let sum = 0;
+            let count = 0;
+            
+            responses.forEach(res => {
+                const rawValue = res[header];
+                const numericValue = parseFloat(rawValue);
+                // Assume Star Day is between 1 and 10, or just use any valid number.
+                if (!isNaN(numericValue)) {
+                    sum += numericValue;
+                    count++;
+                }
+            });
+            
+            return count > 0 ? (sum / count) : 0;
+        }
+
+
+        function renderDashboard() {
+            const sortedDates = Object.keys(allResponses).sort((a, b) => new Date(b) - new Date(a));
+            
+            const allRecentResponses = [];
+            const uniqueDaysProcessed = new Set();
+            for (const dateKey of sortedDates) {
+                if (uniqueDaysProcessed.size >= LOOKBACK_DAYS) break;
+                // Use the latest submission for that day's data point
+                const latestSubmission = allResponses[dateKey][allResponses[dateKey].length - 1]; 
+                allRecentResponses.push({date: dateKey, data: latestSubmission});
+                uniqueDaysProcessed.add(dateKey);
+            }
+            
+            if (allRecentResponses.length === 0) {
+                const insufficient = 'No Data Available.';
+                metricStarDay.textContent = metricSteps.textContent = metricCICO.textContent = metricActivity.textContent = metricWeight.textContent = 'N/A';
+                metricStarDayTrend.innerHTML = metricStepsTrend.innerHTML = metricCICOTrend.innerHTML = metricActivityTrend.innerHTML = metricWeightTrend.innerHTML = `<span class="text-gray-500">${insufficient}</span>`;
+                return;
+            }
+            
+            // Get the data point for the last recorded day
+            const lastRecordedResponse = allRecentResponses[0].data;
+
+            // 30-day responses for the main percentage display
+            const current30DayResponses = allRecentResponses.slice(0, LONG_PERIOD).map(a => a.data);
+
+            const starDayHeader = columnHeaders[COLUMN_INDICES.STAR_DAY]; 
+            const stepHeader = columnHeaders[COLUMN_INDICES.STEPS];
+            const cicoHeader = columnHeaders[COLUMN_INDICES.CICO];
+            const activityHeader = columnHeaders[COLUMN_INDICES.ACTIVITY];
+            const weightHeader = columnHeaders[COLUMN_INDICES.WEIGHT];
+            
+            // 7-day slices for the short-term trend comparison
+            const current7DayResponses = allRecentResponses.slice(0, SHORT_PERIOD).map(a => a.data); // Day 1-7
+            const previous7DayResponses = allRecentResponses.slice(SHORT_PERIOD, SHORT_PERIOD * 2).map(a => a.data); // Day 8-14
+
+            // 1. Star Day Metric
+            const currentStarDayAvg30 = calculateAverage(current30DayResponses, starDayHeader);
+            metricStarDay.textContent = currentStarDayAvg30 > 0 ? currentStarDayAvg30.toFixed(1) : 'N/A';
+            
+            // Trend: 7-day average vs previous 7-day average (Higher is better, so positive trend is good)
+            if (allRecentResponses.length >= SHORT_PERIOD * 2) {
+                const currentStarDayAvg7 = calculateAverage(current7DayResponses, starDayHeader);
+                const prevStarDayAvg7 = calculateAverage(previous7DayResponses, starDayHeader);
+                const diff = currentStarDayAvg7 - prevStarDayAvg7;
+                const absDiff = Math.abs(diff).toFixed(1);
+
+                let direction = 'stable';
+                let trendClass = 'text-gray-600';
+
+                if (Math.abs(diff) < 0.1) {
+                     metricStarDayTrend.innerHTML = `<span class="${trendClass}">Average rating is stable.</span>`;
+                } else if (diff > 0) { // Higher rating is better (GOOD)
+                    direction = 'improving';
+                    trendClass = 'text-green-600 font-semibold';
+                    metricStarDayTrend.innerHTML = `<span class="${trendClass}">Rating is ${direction}, up by ${absDiff} stars.</span>`;
+                } else { // Lower rating is worse (BAD)
+                    direction = 'declining';
+                    trendClass = 'text-red-600 font-semibold';
+                    metricStarDayTrend.innerHTML = `<span class="${trendClass}">Rating is ${direction}, down by ${absDiff} stars.</span>`;
+                }
+            } else {
+                 const lastStarDayValue = lastRecordedResponse[starDayHeader];
+                 metricStarDayTrend.innerHTML = getLastDayStatus(lastStarDayValue, starDayHeader, (v) => true); // Always report last value
+            }
+
+            // 2. Steps Metric
+            // Condition: Goal met if value is 'yes' (string comparison)
+            const stepCond = (v) => v.toLowerCase() === 'yes'; 
+            
+            // Main Display: 30-day percentage
+            const currentStepsPct30 = calculatePercentage(current30DayResponses, stepHeader, stepCond);
+            metricSteps.textContent = `${currentStepsPct30}%`;
+
+            // Trend: 7-day vs previous 7-day percentage (Only if enough data exists)
+            if (allRecentResponses.length >= SHORT_PERIOD * 2) {
+                const currentStepsPct7 = calculatePercentage(current7DayResponses, stepHeader, stepCond);
+                const prevStepsPct7 = calculatePercentage(previous7DayResponses, stepHeader, stepCond);
+                metricStepsTrend.innerHTML = getTrendDescription(currentStepsPct7, prevStepsPct7, true); 
+            } else {
+                 // Fallback to last day status if not enough data for trend
+                 const lastStepValue = lastRecordedResponse[stepHeader];
+                 metricStepsTrend.innerHTML = getLastDayStatus(lastStepValue, stepHeader, stepCond);
+            }
+
+
+            // 3. CICO Metric
+            // Condition: Goal met if value is 'yes' (string comparison)
+            const cicoCond = (v) => v.toLowerCase() === 'yes'; 
+            
+            // Main Display: 30-day percentage
+            const currentCICOPct30 = calculatePercentage(current30DayResponses, cicoHeader, cicoCond);
+            metricCICO.textContent = `${currentCICOPct30}%`;
+            
+            // Trend: 7-day vs previous 7-day percentage (Only if enough data exists)
+            if (allRecentResponses.length >= SHORT_PERIOD * 2) {
+                const currentCICOPct7 = calculatePercentage(current7DayResponses, cicoHeader, cicoCond);
+                const prevCICOPct7 = calculatePercentage(previous7DayResponses, cicoHeader, cicoCond);
+                metricCICOTrend.innerHTML = getTrendDescription(currentCICOPct7, prevCICOPct7, true); 
+            } else {
+                 // Fallback to last day status if not enough data for trend
+                 const lastCICOValue = lastRecordedResponse[cicoHeader];
+                 metricCICOTrend.innerHTML = getLastDayStatus(lastCICOValue, cicoHeader, cicoCond);
+            }
+
+
+            // 4. Activity Metric
+            const activityCond = (v) => v !== ''; // Goal met if there is any value (non-empty string check)
+            
+            // Main Display: Weekly Activity Count (Last 7 unique days) 
+            const weeklyActivityCount = allRecentResponses
+                .slice(0, 7) // Last 7 unique days
+                .filter(a => activityCond(a.data[activityHeader]))
+                .length;
+            
+            metricActivity.textContent = `${weeklyActivityCount} times`;
+
+            // Last Day Status
+            const lastActivityValue = lastRecordedResponse[activityHeader];
+            metricActivityTrend.innerHTML = getLastDayStatus(lastActivityValue, activityHeader, activityCond);
+
+
+            // 5. Weight Trend (Always compares latest entry to previous entry)
+            const weights = allRecentResponses
+                .map(a => ({ date: a.date, value: parseFloat(a.data[weightHeader]) }))
+                .filter(w => !isNaN(w.value))
+                .reverse(); 
+
+            if (weights.length > 0) {
+                const mostRecentWeight = weights[weights.length - 1].value.toFixed(1);
+                metricWeight.textContent = `${mostRecentWeight} lbs`;
+            } else {
+                metricWeight.textContent = 'N/A';
+            }
+
+            if (weights.length >= 2) {
+                const previousWeight = weights[weights.length - 2].value;
+                const mostRecentWeightValue = weights[weights.length - 1].value;
+                const diff = mostRecentWeightValue - previousWeight;
+                const absDiff = Math.abs(diff).toFixed(1);
+
+                let directionText = 'stable';
+                let trendClass = 'text-gray-600';
+                let preposition = 'at';
+
+                if (diff < 0) { // Weight went down (GOOD)
+                    directionText = 'decreasing';
+                    trendClass = 'text-green-600 font-semibold';
+                    preposition = 'by';
+                } else if (diff > 0) { // Weight went up (BAD)
+                    directionText = 'increasing';
+                    trendClass = 'text-red-600 font-semibold';
+                    preposition = 'by';
+                }
+
+                metricWeightTrend.innerHTML = `<span class="${trendClass}">Weight is ${directionText} ${preposition} ${absDiff} lbs since the previous entry.</span>`;
+            } else {
+                 metricWeightTrend.innerHTML = `<span class="text-gray-500">Only one weight entry recorded.</span>`;
+            }
+        }
+        
+        function renderResponseList() {
+            responseListContainer.innerHTML = '';
+            statusMessage.classList.add('hidden');
+
+            const sortedDates = Object.keys(allResponses).sort((a, b) => new Date(b) - new Date(a));
+
+            if (sortedDates.length === 0) {
+                statusMessage.textContent = 'No submissions found.';
+                statusMessage.classList.remove('hidden');
+                return;
+            }
+
+            sortedDates.forEach(dateKey => {
+                const date = new Date(dateKey + 'T00:00:00'); 
+                const submissionsCount = allResponses[dateKey].length;
+
+                const dayCard = document.createElement('div');
+                dayCard.className = 'day-card bg-white p-4 rounded-xl shadow-lg flex justify-between items-center transition duration-150 ease-in-out hover:bg-indigo-50 hover:shadow-xl';
+                dayCard.setAttribute('data-date', dateKey);
+                dayCard.onclick = () => openModal(dateKey);
+
+                const dateDisplay = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+                dayCard.innerHTML = `
+                    <div>
+                        <p class="text-lg font-semibold text-gray-800">${dateDisplay}</p>
+                        <p class="text-sm text-gray-500">${submissionsCount} submission${submissionsCount !== 1 ? 's' : ''}</p>
+                    </div>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                `;
+
+                responseListContainer.appendChild(dayCard);
+            });
+        }
+
+        // --- Daily Submission Modal Functions ---
+        function openModal(dateKey) {
+            const submissions = allResponses[dateKey];
+            const responsesContainer = document.getElementById('responsesContainer');
+            const date = new Date(dateKey + 'T00:00:00');
+            
+            document.getElementById('modalDate').textContent = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            responsesContainer.innerHTML = '';
+
+            submissions.forEach((response, index) => {
+                const submissionDiv = document.createElement('div');
+                submissionDiv.className = 'bg-gray-50 p-4 rounded-lg border border-gray-200';
+                
+                let contentHtml = `<p class="text-base font-bold text-indigo-700 mb-3">Submission #${index + 1}</p>`;
+
+                Object.keys(response).forEach(header => {
+                    const value = response[header];
+                    if (header.toLowerCase() === 'timestamp') return; 
+
+                    contentHtml += `
+                        <div class="mb-2">
+                            <p class="text-sm font-medium text-gray-600">${header}:</p>
+                            <p class="text-base font-normal text-gray-800 break-words">${value}</p>
+                        </div>
+                    `;
+                });
+
+                submissionDiv.innerHTML = contentHtml;
+                responsesContainer.appendChild(submissionDiv);
+            });
+            
+            responseModal.classList.remove('hidden', 'opacity-0');
+            responseModal.classList.add('flex', 'opacity-100');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                responseModal.classList.remove('flex', 'opacity-100');
+                responseModal.classList.add('hidden', 'opacity-0');
+            }, 300);
+        }
+        
+        // --- Chart Modal Functions ---
+
+        function closeChartModal() {
+            chartModalContent.classList.remove('scale-100', 'opacity-100');
+            chartModalContent.classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                chartModal.classList.remove('flex', 'opacity-100');
+                chartModal.classList.add('hidden', 'opacity-0');
+                if (currentChart) {
+                    currentChart.destroy();
+                    currentChart = null;
+                }
+            }, 300);
+        }
+
+        function get30DayChartData(metricKey) {
+            const sortedDates = Object.keys(allResponses).sort((a, b) => new Date(b) - new Date(a));
+            
+            // Get the last 30 unique days of data
+            const last30DaysResponses = sortedDates.slice(0, 30).reverse(); // Reverse to chart chronologically
+
+            let header, successCond, title, unit, isPercent, chartType;
+
+            if (metricKey === 'STAR_DAY') {
+                header = columnHeaders[COLUMN_INDICES.STAR_DAY];
+                title = "Frequency of Daily Star Ratings";
+                unit = 'Days';
+                isPercent = false;
+                chartType = 'bar';
+                
+                // Calculate frequency count for 1 to 10 stars
+                const starCounts = new Array(10).fill(0); // Index 0 is 1 star, index 9 is 10 stars
+
+                last30DaysResponses.forEach(dateKey => {
+                    const latestSubmission = allResponses[dateKey][allResponses[dateKey].length - 1];
+                    const rawValue = latestSubmission[header];
+                    // Use parseInt as star days are integers
+                    const numVal = parseInt(rawValue); 
+                    
+                    if (!isNaN(numVal) && numVal >= 1 && numVal <= 10) {
+                        starCounts[numVal - 1]++;
+                    }
+                });
+                
+                // Prepare arrays for Chart.js
+                const labels = starCounts.map((count, index) => `${index + 1} Star`);
+                const data = starCounts;
+                
+                return { labels, data, title, unit, isPercent, type: chartType };
+
+            } else {
+                // Logic for LINE CHARTS (Steps, CICO, Activity, Weight)
+                const dataPoints = [];
+                chartType = 'line';
+
+                switch (metricKey) {
+                    case 'STEPS':
+                        header = columnHeaders[COLUMN_INDICES.STEPS];
+                        successCond = (v) => v.toString().toLowerCase() === 'yes';
+                        title = "Steps Success Rate";
+                        unit = '%';
+                        isPercent = true;
+                        break;
+                    case 'CICO':
+                        header = columnHeaders[COLUMN_INDICES.CICO];
+                        successCond = (v) => v.toString().toLowerCase() === 'yes';
+                        title = "CICO Success Rate";
+                        unit = '%';
+                        isPercent = true;
+                        break;
+                    case 'ACTIVITY':
+                        header = columnHeaders[COLUMN_INDICES.ACTIVITY];
+                        successCond = (v) => v !== '';
+                        title = "Activity Recorded";
+                        unit = 'Yes/No';
+                        isPercent = false; 
+                        break;
+                    case 'WEIGHT':
+                        header = columnHeaders[COLUMN_INDICES.WEIGHT];
+                        successCond = (v) => true; 
+                        title = "Body Weight";
+                        unit = 'lbs';
+                        isPercent = false;
+                        break;
+                    default:
+                        return null;
+                }
+
+                last30DaysResponses.forEach(dateKey => {
+                    const latestSubmission = allResponses[dateKey][allResponses[dateKey].length - 1];
+                    const rawValue = latestSubmission[header];
+                    let value = null;
+                    let valid = false;
+
+                    if (metricKey === 'WEIGHT') {
+                        const numVal = parseFloat(rawValue);
+                        if (!isNaN(numVal)) {
+                            value = numVal;
+                            valid = true;
+                        }
+                    } else { // STEPS, CICO, ACTIVITY (Daily Success/Failure)
+                        const isGoalMet = successCond(rawValue || '');
+                        // For charting, use 100% for met, 0% for not met, or null if no entry
+                        if (rawValue !== null && rawValue !== undefined && rawValue !== '') {
+                            value = isGoalMet ? 100 : 0; 
+                            valid = true;
+                        }
+                    }
+
+                    // Only include data points that have a valid value
+                    if (valid) {
+                        dataPoints.push({
+                            date: new Date(dateKey + 'T00:00:00'),
+                            value: value
+                        });
+                    }
+                });
+
+                // Prepare arrays for Chart.js (Line Chart)
+                const labels = dataPoints.map(p => p.date.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' }));
+                const data = dataPoints.map(p => p.value);
+
+                return { labels, data, title, unit, isPercent, type: chartType };
+            }
+        }
+
+
+        function openChartModal(metricKey) {
+            const chartData = get30DayChartData(metricKey);
+
+            // Check if there's any data point to chart
+            if (!chartData || chartData.data.length === 0) {
+                const fallbackTitle = (chartData && chartData.title) ? chartData.title : metricKey;
+                document.getElementById('chartModalTitle').textContent = `${fallbackTitle}: No Data Available in Last 30 Days`;
+            } else {
+                document.getElementById('chartModalTitle').textContent = `${chartData.title} (Last ${metricKey === 'STAR_DAY' ? 30 : chartData.data.length} Days)`;
+            }
+            
+            // Display modal
+            chartModal.classList.remove('hidden', 'opacity-0');
+            chartModal.classList.add('flex', 'opacity-100');
+            setTimeout(() => {
+                chartModalContent.classList.remove('scale-95', 'opacity-0');
+                chartModalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+
+            if (!chartData || chartData.data.length === 0) return; // Exit if no data for chart rendering
+
+            const ctx = document.getElementById('miniChart').getContext('2d');
+
+            // Destroy previous chart instance if it exists
+            if (currentChart) {
+                currentChart.destroy();
+            }
+            
+            // Determine chart type and Y-axis configuration
+            const chartType = chartData.type || 'line';
+
+            let suggestedMin = 0;
+            let suggestedMax = undefined;
+            
+            if (metricKey === 'WEIGHT') {
+                // Fixed weight scale
+                suggestedMin = 230; 
+                suggestedMax = 260;
+            } else if (chartType === 'line' && metricKey !== 'WEIGHT') {
+                // Steps, CICO (plotted as 0 or 100)
+                suggestedMin = -10; 
+                suggestedMax = 110;
+            } else if (metricKey === 'STAR_DAY') {
+                // Star Day Bar Chart (Frequency)
+                suggestedMin = 0;
+                suggestedMax = undefined; // Let Chart.js determine the max count
+            }
+
+            // Define colors based on chart type
+            const borderColor = chartType === 'bar' ? 'rgba(79, 70, 229, 0.8)' : '#4f46e5';
+            const backgroundColor = chartType === 'bar' ? 'rgba(79, 70, 229, 0.5)' : 'rgba(79, 70, 229, 0.1)';
+
+
+            // Create the new chart
+            currentChart = new Chart(ctx, {
+                type: chartType,
+                data: {
+                    labels: chartData.labels,
+                    datasets: [{
+                        label: chartData.title,
+                        data: chartData.data,
+                        borderColor: borderColor, 
+                        backgroundColor: backgroundColor,
+                        fill: chartType !== 'bar', // Only fill for line charts
+                        tension: chartType === 'line' ? 0.2 : 0,
+                        pointRadius: chartType === 'line' ? 4 : 0,
+                        pointBackgroundColor: '#4f46e5',
+                        // Bar chart specific properties
+                        barPercentage: 0.9,
+                        categoryPercentage: 0.9,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            title: {
+                                display: true,
+                                text: chartData.unit,
+                                color: '#4f46e5'
+                            },
+                            beginAtZero: true,
+                            suggestedMin: suggestedMin,
+                            suggestedMax: suggestedMax,
+                            ticks: {
+                                callback: function(value, index, ticks) {
+                                    // Custom formatting for Star Day Bar Chart (showing days count)
+                                    if (metricKey === 'STAR_DAY') {
+                                        // Only show integer counts for days
+                                        if (value % 1 === 0) {
+                                            return value.toFixed(0) + ' ' + chartData.unit; 
+                                        }
+                                        return null; // Hide non-integer ticks
+                                    }
+                                    // Formatting for line charts
+                                    return value + (chartData.isPercent ? '%' : (metricKey === 'WEIGHT' ? ` ${chartData.unit}` : ''));
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(200, 200, 200, 0.2)',
+                            }
+                        },
+                        x: {
+                             // Adjust X-axis title for bar chart clarity
+                             title: {
+                                display: metricKey === 'STAR_DAY',
+                                text: 'Star Rating',
+                                color: '#4f46e5'
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        const value = context.parsed.y;
+                                        let unit = '';
+                                        
+                                        // Custom tooltip formatting for Star Day bar chart
+                                        if (metricKey === 'STAR_DAY') {
+                                            unit = ' ' + chartData.unit;
+                                            return `${context.label}: ${value.toFixed(0)}${unit}`;
+                                        } 
+                                        
+                                        // Original formatting for line charts
+                                        if (metricKey === 'WEIGHT') {
+                                            unit = ` ${chartData.unit}`;
+                                        } else if (chartData.isPercent) {
+                                            unit = '%';
+                                        }
+                                        label += value.toFixed(metricKey === 'WEIGHT' || metricKey === 'STAR_DAY' ? 1 : 0) + unit;
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+
+        window.onload = fetchSheetData;
+    </script>
+</body>
+</html>
