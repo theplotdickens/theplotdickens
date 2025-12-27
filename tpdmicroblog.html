@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>www.theplotdickens.com</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      background: #fdfdfd; 
+      color: #222; 
+    }
+    
+    h1, h2 {
+        font-family: Arial, sans-serif; 
+    }
+
+    /* Target the italic text in the header for the green color */
+    h1 i {
+        color: #2e7d32;
+        font-style: italic;
+    }
+    
+    a {
+      display: inline;
+      margin: 0.5em 0;
+      color: #0000EE; 
+      text-decoration: underline;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    #blog-posts {
+        margin-top: 2em;
+    }
+
+    /* Date header styling */
+    .date-header {
+        font-weight: bold;
+        color: #2e7d32; 
+        font-size: 1.1em;
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+        display: block;
+    }
+
+    /* Individual post styling */
+    .post {
+        margin-bottom: 1em; /* One line space */
+        white-space: pre-wrap;
+    }
+
+    .time-stamp {
+        font-weight: bold;
+        color: #2e7d32; 
+    }
+
+  </style>
+</head>
+<body>
+  <center><h1>www.theplotdickens.com</h1></center>
+  <center><h1><i>behold, the TPD MICROBLOG</i></h1></center>
+  <center><strong><a href="https://theplotdickens.github.io/theplotdickens/">go back to main page</a></strong></center>
+  <br>
+  
+  <div id="blog-posts">Loading posts...</div>
+
+    <script>
+        const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTVyerWtX25cCdFT3wichtFuYp7Na4ed-o8xDk9SVklWvVhH0Nw8yEHZw3ABQHNJZpCcQ507Uuy2ZRG/pub?output=csv";
+
+        async function fetchPosts() {
+            try {
+                const response = await fetch(sheetUrl);
+                const csvText = await response.text();
+                const rows = csvText.split(/\r?\n/).filter(row => row.trim() !== "");
+                const dataRows = rows.slice(1);
+                
+                const container = document.getElementById('blog-posts');
+                container.innerHTML = '';
+
+                let lastDateStr = ""; 
+
+                dataRows.reverse().forEach(row => {
+                    const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+                    
+                    if (columns.length >= 2) {
+                        const rawDate = columns[0].replace(/^"|"$/g, '').trim();
+                        const content = columns[1].replace(/^"|"$/g, '').trim();
+
+                        if (!content) return;
+
+                        const dateObj = new Date(rawDate);
+                        if (isNaN(dateObj.getTime())) return;
+
+                        const currentDateStr = dateObj.toLocaleDateString('en-US', { 
+                            weekday: 'long', 
+                            month: 'long', 
+                            day: 'numeric', 
+                            year: 'numeric' 
+                        });
+                        
+                        const timePart = dateObj.toLocaleTimeString('en-US', { 
+                            hour: 'numeric', 
+                            minute: '2-digit', 
+                            hour12: true 
+                        }).toLowerCase().replace(/\s/g, '');
+
+                        if (currentDateStr !== lastDateStr) {
+                            const dateHeader = document.createElement('div');
+                            dateHeader.className = 'date-header';
+                            dateHeader.innerText = currentDateStr;
+                            container.appendChild(dateHeader);
+                            lastDateStr = currentDateStr;
+                        }
+
+                        const postDiv = document.createElement('div');
+                        postDiv.className = 'post';
+                        postDiv.innerHTML = `<span class="time-stamp">${timePart}</span>: ${content}`;
+                        container.appendChild(postDiv);
+                    }
+                });
+            } catch (error) {
+                document.getElementById('blog-posts').innerText = 'Error loading posts.';
+            }
+        }
+
+        fetchPosts();
+    </script>
+</body>
+</html>
