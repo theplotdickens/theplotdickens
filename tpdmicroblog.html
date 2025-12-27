@@ -86,7 +86,9 @@
                     
                     if (columns.length >= 2) {
                         const rawDate = columns[0].replace(/^"|"$/g, '').trim();
-                        const content = columns[1].replace(/^"|"$/g, '').trim();
+                        
+                        // Clean up the quotes: remove outer CSV quotes AND convert double quotes back to single ones
+                        let content = columns[1].replace(/^"|"$/g, '').replace(/""/g, '"').trim();
 
                         if (!content) return;
 
