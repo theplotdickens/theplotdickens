@@ -94,8 +94,24 @@
   <img src="https://raw.githubusercontent.com/theplotdickens/theplotdickens/main/photo%20of%20me%20at%20bridge.JPG" class="header-img" alt="Brian Dickens at bridge">
 
   <h1>www.theplotdickens.com</h1>
-  <p>A website for Brian Dickens, one of the baldest singer/songwriters in Franklin County, Massachusetts.</p>
+  <h3>
+  	<a href="#BIOGRAPHY">Biography</a>
+    |
+	<a href="#SHOWS">Shows</a>
+    |
+	<a href="#MUSIC">Music</a>
+    |
+	<a href="#ANNOTATED">Annotated Songs</a>
+    |
+	<a href="#MEDIA">News and Media</a>
+    |
+	<a href="#CONTACT">Contact Form</a></h3>
+  <p><b>The website for Brian Dickens, one of the baldest singer/songwriters in Franklin County, Massachusetts.</b></p>
+    <p><i><u>Website last updated 2026 01 04</u></i></p>
 
+<div id="BIOGRAPHY">
+<span style="font-size: 1.7em;"><b>Biography</b></span><br>
+</div>
   <p>Brian Dickens is a singer, songwriter and guitarist from Turners Falls, MA. He has been performing his own songs on stages around New England and beyond since 2004. In 2012, he released his first full length solo acoustic album, followed a number of EPs. In 2016, he released "...And The Plot Dickens", his first full-band produced album. In 2018, he released "Posterity Measures", another full-band album, a 30 minute collection of mostly punk rock oriented songs. As of 2025, he continues to write more music, anticipating producing another album in the future.</p>
 
   <p>Brian Dickens writes songs about a lot of subjects but they are nearly all autobiographical and nonfictional. While singing lyrics spanning the serious and the silly, he plays corresponding acoustic guitar in a groovy, rhythmic style, drawing inspiration from folk, rock, blues and punk music.</p>
@@ -119,8 +135,9 @@
     <a href="https://theplotdickens.github.io/theplotdickens/tpdmicroblog">CLICK FOR THE MICROBLOG (NEW! NEW! NEW!)</a>
   </p>
 
-  <p><i><u>Website updated 2026 01 04</u></i></p>
 
+<div id="SHOWS">
+</div>
   <div style="margin-top: 2em;">
     <span style="font-size: 1.7em;"><b>Shows</b></span><br>
     <a href="https://theplotdickens.github.io/theplotdickens/pastshows.html">(Click to see past shows on a new page)</a>
@@ -128,22 +145,31 @@
 
   <ul id="show-listings">Loading...</ul>
 
+<div id="MUSIC">
   <div style="margin-top: 2em;">
     <span style="font-size: 1.7em;"><b>Music</b></span><br>
     (I haven't done albums in a while but they are out there!)
   </div>
 
+
+
+</div>
   <ul>
+    <li>2026 01 04:<a href="https://youtu.be/lrl9AFV7q-o?si=BQnGxslu51q1CQsL">"LIVE AT FLOODWATER BREWING CO 1/4/26" (link to youtube)</a>. I recorded this at a recent show and it contains six songs I haven't put out on a proper album yet. I am hoping to create a new album in 2026 containing these songs. 
     <li>2018 11 08: <a href="https://briandickens.bandcamp.com/album/posterity-measures-2018">"POSTERITY MEASURES"</a>. I recorded this throughout 2017 and 2018 at <a href="https://www.loudsunstudio.com/">Loud Sun Studio</a>. Produced by Ben Rogers with aid from Mia Govoni, drums by Ben Rogers, electric guitars and bass by Ian Galipeau. Album cover by Snide Molly.</li>
     <li>2016 06 18: <a href="https://briandickens.bandcamp.com/album/and-the-plot-dickens-2016">"AND THE PLOT DICKENS"</a>. Recorded in early 2016 at Ian Galipeau's home studio. Ian Galipeau on drums, bass, electric guitar and banjo. Album artwork by Madison Pierce.</li>
   </ul>
 
+
+<div id="ANNOTATED">
   <div style="margin-top: 2em;">
     <span style="font-size: 1.7em;"><b>Annotated Songs **new**</b></span><br>
     <a href="https://theplotdickens.github.io/theplotdickens/bigfish">Big Fish</a> | 
     <a href="https://theplotdickens.github.io/theplotdickens/livingroom">Living Room</a>
   </div>
 
+
+<div id="MEDIA">
   <div style="margin-top: 2em;">
     <span style="font-size: 1.7em;"><b>News and Media</b></span>
   </div>
@@ -151,6 +177,8 @@
   <ul id="submissions">Loading...</ul>
   <button id="toggleBtn" style="display:none;">★Click to show or hide older news and media★</button>
 
+
+<div id="CONTACT">
   <div style="margin-top: 3em;">
     <iframe src="https://docs.google.com/forms/d/e/1FAIpQLSdp_o-zoJobHNETJfFITs7Fem8e3-fs-bHVDp5n7BGpizrbZA/viewform?embedded=true"
             width="100%" height="800" frameborder="0" marginheight="0" marginwidth="0">
@@ -216,12 +244,12 @@
                 return li;
             };
 
-            rows.slice(0, 2).forEach(row => list.appendChild(createItem(row)));
+            rows.slice(0, 4).forEach(row => list.appendChild(createItem(row)));
 
-            if (rows.length > 2) {
+            if (rows.length > 4) {
               const hiddenDiv = document.createElement("div");
               hiddenDiv.style.display = "none";
-              rows.slice(2).forEach(row => hiddenDiv.appendChild(createItem(row)));
+              rows.slice(4).forEach(row => hiddenDiv.appendChild(createItem(row)));
               list.appendChild(hiddenDiv);
               toggleBtn.style.display = "inline-block";
               toggleBtn.onclick = () => {
