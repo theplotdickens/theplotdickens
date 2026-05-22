@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>The Plot Clickens</title>
+    <style>
+        body { 
+            font-family: 'Courier New', Courier, 'Lucida Sans Typewriter', 'Lucida Typewriter', monospace; 
+            text-align: center; padding-top: 30px; background: #d8e6d1; color: #2c3e50; overflow-x: hidden; 
+        }
+
+        h1 { font-size: 48px; letter-spacing: -2px; margin-bottom: 10px; }
+
+        #big-button { 
+            padding: 15px 30px; font-size: 18px; cursor: pointer; border: 2px solid #2c3e50; 
+            background: #fdfdfd; color: #2c3e50; font-family: inherit; font-weight: bold;
+            margin-bottom: 10px; border-radius: 4px; box-shadow: 2px 2px 0px #2c3e50;
+            position: relative; z-index: 10;
+        }
+
+        #big-button:active { transform: translate(1px, 1px); box-shadow: 0px 0px 0px #2c3e50; }
+
+        .floating-text {
+            position: absolute; pointer-events: none; font-weight: bold;
+            font-size: 20px; color: #4b635a; animation: floatUp 0.8s ease-out forwards;
+        }
+
+        @keyframes floatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-100px); opacity: 0; } }
+
+        #dev-button {
+            display: block; margin: 20px auto; padding: 5px 10px; font-size: 12px;
+            background: #a94442; color: #fff; border: none; cursor: pointer; opacity: 0.6; border-radius: 3px;
+        }
+
+        .stats { font-size: 32px; margin: 10px; font-weight: bold; min-height: 40px; }
+        #wps-container { visibility: hidden; font-size: 18px; opacity: 0.9; }
+        #achievement-display { font-size: 18px; color: #5d4037; font-weight: bold; height: 24px; margin-bottom: 10px; }
+
+        #shop { display: none; margin-top: 20px; padding: 20px; border-top: 1px solid rgba(44, 62, 80, 0.2); }
+
+        .upgrade-row { 
+            margin: 12px auto; display: none; width: 85%;
+            justify-content: space-between; align-items: center; max-width: 900px;
+        }
+
+        .tool-btn {
+            padding: 10px; font-size: 14px; cursor: pointer; 
+            background: #2c3e50; color: #d8e6d1; border: none; border-radius: 4px;
+        }
+
+        .buy-one { width: 300px; }
+        .buy-ten { width: 120px; margin-left: 10px; background: #4b635a; }
+
+        .tool-btn:disabled { background: #bdc3c7 !important; color: #7f8c8d !important; cursor: not-allowed; }
+
+        .owned-info { flex-grow: 1; text-align: right; font-size: 14px; color: #4b635a; min-width: 150px; }
+    </style>
+</head>
+<body>
+
+    <h1>The Plot Clickens</h1>
+
+    <div id="achievement-display">New Talent</div>
+    <div class="stats">Words: <span id="words">0</span></div>
+    <div id="wps-container" class="stats">Total WPS: <span id="wps">0</span></div>
+    
+    <button id="big-button">Write</button>
+    <button id="dev-button">DEV: +250,000 Words</button>
+
+    <div id="shop">
+        <h3>Creative Tools</h3>
+        <div id="tool-container"></div>
+    </div>
+
+    <script>
+        let words = 0;
+        let totalWPS = 0;
+        let lastUpdateTime = performance.now();
+
+        let tools = {
+            t1:  { count: 0, cost: 5,       power: 1,      threshold: 5,       name: "Thought" },
+            t2:  { count: 0, cost: 25,      power: 3,      threshold: 25,      name: "Big Idea" },
+            t3:  { count: 0, cost: 250,     power: 5,      threshold: 250,     name: "Poem" },
+            t4:  { count: 0, cost: 750,     power: 15,     threshold: 750,     name: "Catchy Tune" },
+            t5:  { count: 0, cost: 2500,    power: 50,     threshold: 2500,    name: "Finished Song" },
+            t6:  { count: 0, cost: 10000,   power: 125,    threshold: 10000,   name: "Album" },
+            t7:  { count: 0, cost: 25000,   power: 250,    threshold: 25000,   name: "Live Album" },
+            t8:  { count: 0, cost: 50000,   power: 500,    threshold: 50000,   name: "Deluxe Edition" },
+            t9:  { count: 0, cost: 100000,  power: 1000,   threshold: 100000,  name: "Box Set" },
+            t10: { count: 0, cost: 250000,  power: 5000,   threshold: 250000,  name: "Discography" }
+        };
+
+        const container = document.getElementById('tool-container');
+        Object.keys(tools).forEach(id => {
+            const row = document.createElement('div');
+            row.className = 'upgrade-row';
+            row.id = `row-${id}`;
+            row.innerHTML = `
+                <button class="tool-btn buy-one" id="buy-${id}"></button>
+                <button class="tool-btn buy-ten" id="buy-ten-${id}">Buy 10</button>
+                <span class="owned-info">Owned: <span id="${id}-count">0</span> (+${tools[id].power.toLocaleString()}/s)</span>
+            `;
+            container.appendChild(row);
+            document.getElementById(`buy-${id}`).onclick = () => buyTool(id, 1);
+            document.getElementById(`buy-ten-${id}`).onclick = () => buyTool(id, 10);
+        });
+
+        function buyTool(id, amount) {
+            let t = tools[id];
+            for(let i=0; i<amount; i++) {
+                if (words >= t.cost) {
+                    words -= t.cost;
+                    t.count++;
+                    t.cost = Math.round(t.cost * 1.15);
+                } else { break; }
+            }
+            recalculateWPS();
+        }
+
+        function getCostForTen(baseCost) {
+            let total = 0; let current = baseCost;
+            for(let i=0; i<10; i++) { total += current; current = Math.round(current * 1.15); }
+            return total;
+        }
+
+        function getClickValue() {
+            let base = 1;
+            if (words >= 1000000) return base + Math.floor(totalWPS * 0.20);
+            if (words >= 100000) return base + Math.floor(totalWPS * 0.15);
+            if (words >= 10000) return base + Math.floor(totalWPS * 0.10);
+            return base;
+        }
+
+        document.getElementById('big-button').onclick = (e) => {
+            let val = getClickValue();
+            words += val;
+            const el = document.createElement('div');
+            el.className = 'floating-text';
+            el.innerText = "+" + val.toLocaleString();
+            el.style.left = e.clientX + 'px'; el.style.top = e.clientY + 'px';
+            document.body.appendChild(el);
+            setTimeout(() => el.remove(), 800);
+        };
+
+        document.getElementById('dev-button').onclick = () => { words += 250000; };
+
+        function recalculateWPS() {
+            let newWPS = 0;
+            Object.keys(tools).forEach(id => { newWPS += (tools[id].count * tools[id].power); });
+            totalWPS = newWPS;
+            document.getElementById('wps').innerText = totalWPS.toLocaleString();
+            if (totalWPS > 0) document.getElementById('wps-container').style.visibility = "visible";
+        }
+
+        function draw() {
+            document.getElementById('words').innerText = Math.floor(words).toLocaleString();
+            const ach = document.getElementById('achievement-display');
+            if (words >= 1000000) ach.innerText = "Music Legend (Click = +20% WPS)";
+            else if (words >= 100000) ach.innerText = "Regional Talent (Click = +15% WPS)";
+            else if (words >= 10000) ach.innerText = "Local Hero (Click = +10% WPS)";
+            requestAnimationFrame(draw);
+        }
+
+        function gameLoop() {
+            let now = performance.now();
+            let deltaTime = (now - lastUpdateTime) / 1000; 
+            lastUpdateTime = now;
+            if (totalWPS > 0) words += totalWPS * deltaTime;
+            setTimeout(gameLoop, 10);
+        }
+
+        function updateShop() {
+            Object.keys(tools).forEach(id => {
+                let t = tools[id];
+                let row = document.getElementById(`row-${id}`);
+                let btnOne = document.getElementById(`buy-${id}`);
+                let btnTen = document.getElementById(`buy-ten-${id}`);
+                let countSpan = document.getElementById(`${id}-count`);
+
+                if (words >= t.threshold || t.count > 0) {
+                    row.style.display = "flex";
+                    document.getElementById('shop').style.display = "block";
+                }
+                
+                btnOne.innerText = `Buy ${t.name} (${t.cost.toLocaleString()})`;
+                btnOne.disabled = (words < t.cost);
+
+                let costTen = getCostForTen(t.cost);
+                btnTen.innerText = `Buy 10 (${costTen.toLocaleString()})`;
+                btnTen.disabled = (words < costTen);
+
+                countSpan.innerText = t.count.toLocaleString();
+            });
+            setTimeout(updateShop, 100);
+        }
+
+        recalculateWPS();
+        requestAnimationFrame(draw);
+        gameLoop();
+        updateShop();
+    </script>
+</body>
+</html>
