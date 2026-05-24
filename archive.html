@@ -1,1 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News & Media - www.theplotdickens.com</title>
+  <style>
+    /* Background layer matching main site */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background-image: url("https://raw.githubusercontent.com/theplotdickens/theplotdickens/main/leafbackground.jpg");
+      background-repeat: repeat; 
+      background-size: auto;
+      opacity: 0.2; 
+    }
 
+    body {
+      background: transparent;
+      position: relative;
+      font-family: sans-serif;
+      padding: 2em 1em;
+      color: #222;
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+    }
+
+    a {
+      display: inline-block;
+      margin: 0.2em 0;
+      color: green;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      margin-bottom: 0.2em;
+    }
+
+    ul {
+      list-style-type: disc;
+      padding-left: 1.5em;
+      text-align: left;
+      display: inline-block;
+      max-width: 100%;
+    }
+
+    li {
+      margin-bottom: 0.75em;
+      line-height: 1.4;
+    }
+
+    #toggleBtn {
+      font-size: 1.1em;
+      font-weight: bold;
+      padding: 0.5em 1em;
+      cursor: pointer;
+      margin-top: 1em;
+    }
+
+    /* --- MOBILE OPTIMIZATION --- */
+    @media (max-width: 600px) {
+      body {
+        font-size: 12px;
+        padding: 1.5em 0.8em;
+      }
+      h1 { font-size: 1.8em; }
+      .container { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>News and Media</h1>
+  <p><a href="index.html">← Back to Main Page</a></p>
+
+  <div id="MEDIA" style="margin-top: 2em;">
+    <ul id="submissions">Loading news...</ul>
+    <br>
+    <button id="toggleBtn" style="display:none;">★Click to show or hide older news★</button>
+  </div>
+</div>
+
+<script>
+  (function() {
+      const newsSheetID = "1TDHFyY3_s4X5hVJFHnrLQwHQdltlVcJEQVN880wd2TI";
+      const sheetURLNews = `https://docs.google.com/spreadsheets/d/${newsSheetID}/gviz/tq?tqx=out:json`;
+
+      fetch(sheetURLNews)
+        .then(res => res.text())
+        .then(text => {
+          let match = text.match(/google\.visualization\.Query\.setResponse\((.*)\)/);
+          let jsonText = match[1];
+          let json = JSON.parse(jsonText);
+          const rows = json.table.rows;
+          const list = document.getElementById("submissions");
+          const toggleBtn = document.getElementById("toggleBtn");
+          list.innerHTML = "";
+          
+          const createItem = (row) => {
+              const date = row.c[1]?.f?.split(' ')[0] || "";
+              const linkURL = row.c[2]?.v || "";
+              const linkText = row.c[3]?.v || "";
+              const desc = row.c[4]?.v || "";
+              const li = document.createElement("li");
+              li.innerHTML = `${date} <a href="${linkURL}" target="_blank">${linkText}</a> ${desc}`;
+              return li;
+          };
+
+          // Displays first 4 items
+          rows.slice(0, 4).forEach(row => list.appendChild(createItem(row)));
+
+          // Handles older news button if extra items exist
+          if (rows.length > 4) {
+            const hiddenDiv = document.createElement("div");
+            hiddenDiv.style.display = "none";
+            rows.slice(4).forEach(row => hiddenDiv.appendChild(createItem(row)));
+            list.appendChild(hiddenDiv);
+            toggleBtn.style.display = "inline-block";
+            toggleBtn.onclick = () => {
+              const isHidden = hiddenDiv.style.display === "none";
+              hiddenDiv.style.display = isHidden ? "block" : "none";
+              toggleBtn.innerText = isHidden ? "★Click to hide older news★" : "★Click to show older news★";
+            };
+          }
+        })
+        .catch(err => {
+          document.getElementById("submissions").innerText = "Failed to load news feed.";
+        });
+  })();
+</script>
+
+</body>
+</html>
