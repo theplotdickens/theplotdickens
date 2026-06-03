@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Disables pinch-to-zoom completely and sets initial scale -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>THEPLOTDICKENSARCHIVE</title>
 
@@ -13,6 +12,9 @@
 
     html {
       font-size: 100%; 
+      /* Prevents iOS Safari and Alternative Mobile Browsers from automatically shrinking text sizes */
+      -webkit-text-size-adjust: none;
+      text-size-adjust: none;
     }
 
     * {
@@ -20,14 +22,21 @@
       box-sizing: border-box;
     }
 
-    /* Sets a large, legible base text size for mobile, enforces left-alignment, and adds padding */
     body {
       text-align: left;
       line-height: 1.5;
       padding: 15px;
       margin: 0 auto;
       max-width: 800px;
-      font-size: 19px; /* Explicitly forces a readable mobile font size */
+      /* Using viewport width units (vw) ensures the font physically scales up relative to the phone screen width */
+      font-size: 4.5vw; 
+    }
+
+    /* Media query to make sure the text size doesn't become comically huge on a desktop monitor */
+    @media screen and (min-width: 600px) {
+      body {
+        font-size: 18px;
+      }
     }
 
     h1 { font-size: 1.8rem; }
@@ -178,6 +187,24 @@
     <li><a href="https://youtu.be/n9CJjD3fEJ4">"Laying Awake Dreaming"</a></li>
   </ul>
 </div>
+
+<!-- JavaScript script explicitly intercepts and blocks multi-touch pinch gestures -->
+<script>
+  document.addEventListener('touchmove', function (event) {
+    if (event.scale !== undefined && event.scale !== 1) { 
+      event.preventDefault(); 
+    }
+  }, { passive: false });
+
+  let lastTouchEnd = 0;
+  document.addEventListener('touchend', function (event) {
+    let now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, false);
+</script>
 
 </body>
 </html>
