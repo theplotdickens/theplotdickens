@@ -1,53 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>THEPLOTDICKENSARCHIVE</title>
-  
-  <!-- The absolute script lock: resets WebKit text-autosizing on every DOM load/refresh -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      document.body.style.webkitTextSizeAdjust = "100%";
-      document.body.style.textSizeAdjust = "100%";
-    });
-  </script>
-
   <style>
-    a[href], a:link, a:visited {
-      color: green !important;
+    /* Force the mobile viewport engine to completely disable automatic text autosizing */
+    html {
+      -webkit-text-size-adjust: 100% !important;
+      text-size-adjust: 100% !important;
+      width: 100%;
+      height: 100%;
+      overflow: hidden; /* Stops the browser from calculating total page height on refresh */
     }
-    html, body {
+    
+    body {
       font-family: Arial, sans-serif;
       line-height: 1.5;
-      padding: 0;
       margin: 0;
-      background-color: #ffffff;
+      padding: 0;
+      width: 100%;
+      height: 100%;
       -webkit-text-size-adjust: 100% !important;
       text-size-adjust: 100% !important;
     }
+
+    /* Create an independent scrolling wrapper. The browser treats this container as a single static screen box, killing the refresh-shrink bug permanently. */
     .page-wrapper {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
       padding: 15px;
       box-sizing: border-box;
+      -webkit-overflow-scrolling: touch;
     }
-    body, div, p, li, a {
+
+    a[href], a:link, a:visited {
+      color: green !important;
+    }
+
+    /* Fixed pixel rules that cannot be mathematically modified by mobile engines */
+    body, div, p, li, a, h4 {
       font-size: 16px !important;
     }
+
     h1 {
       font-size: 24px !important;
       margin-bottom: 0;
     }
+
     h2 {
       font-size: 18px !important;
       margin-top: 1.5rem;
       margin-bottom: 0;
     }
+
     ul {
       padding-left: 20px;
       margin-top: 5px;
     }
+
     li {
       margin-bottom: 8px;
       word-wrap: break-word;
+    }
+
+    .img-container {
+      width: 100%;
+      max-width: 220px;
+      margin-bottom: 15px;
+    }
+
+    .img-container img {
+      display: block;
+      width: 100%;
+      height: auto;
     }
   </style>
 </head>
@@ -55,9 +85,8 @@
 
 <div class="page-wrapper">
 
-  <!-- PROFILE PHOTO -->
-  <div>
-    <img src="https://raw.githubusercontent.com/theplotdickens/theplotdickens/main/photo%20of%20me%20at%20bridge.JPG" alt="Brian Dickens at the bridge" style="display: block; width: 100%; max-width: 220px; height: auto; margin-bottom: 15px;">
+  <div class="img-container">
+    <img src="https://raw.githubusercontent.com/theplotdickens/theplotdickens/main/photo%20of%20me%20at%20bridge.JPG" alt="Brian Dickens at the bridge">
   </div>
   
   <div>
