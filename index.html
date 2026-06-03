@@ -4,14 +4,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>THEPLOTDICKENSARCHIVE</title>
   <style>
-    /* 1. Global Reset & Hard Viewport Lock to completely break Text Autosizing */
+    /* Force the mobile viewport engine to completely disable automatic font scaling */
     html {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
       -webkit-text-size-adjust: 100% !important;
       text-size-adjust: 100% !important;
+      width: 100%;
+      height: 100%;
     }
     
     body {
@@ -21,29 +19,22 @@
       padding: 0;
       width: 100%;
       height: 100%;
-      /* Forces layout engine into a strict rendering context that cannot scale text on refresh */
-      display: flex;
-      flex-direction: column;
-      -webkit-text-size-adjust: 100% !important;
-      text-size-adjust: 100% !important;
     }
 
-    /* 2. Scroll container that treats the layout as a static box to disable Font Boosting */
-    .page-wrapper {
-      flex: 1;
-      overflow-y: auto;
-      overflow-x: hidden;
+    /* The structural lock: forcing a strict layout box blocks the refresh-shrink bug */
+    main {
+      display: block;
       width: 100%;
+      max-width: 100vw;
       box-sizing: border-box;
       padding: 15px;
-      -webkit-overflow-scrolling: touch;
     }
 
     a[href], a:link, a:visited {
       color: green !important;
     }
 
-    /* 3. Force precise pixel sizes that bypass browser scaling overrides */
+    /* Strict pixel rules that cannot be mathematically shrunk by mobile engines */
     body, div, p, li, a, h4 {
       font-size: 16px !important;
     }
@@ -69,13 +60,13 @@
       word-wrap: break-word;
     }
 
-    .img-container {
+    .img-wrapper {
       width: 100%;
       max-width: 220px;
       margin-bottom: 15px;
     }
 
-    .img-container img {
+    .img-wrapper img {
       display: block;
       width: 100%;
       height: auto;
@@ -84,9 +75,9 @@
 </head>
 <body>
 
-<div class="page-wrapper">
+<main>
 
-  <div class="img-container">
+  <div class="img-wrapper">
     <img src="https://raw.githubusercontent.com/theplotdickens/theplotdickens/main/photo%20of%20me%20at%20bridge.JPG" alt="Brian Dickens at the bridge">
   </div>
   
@@ -224,7 +215,7 @@
     </ul>
   </div>
 
-</div>
+</main>
 
 </body>
 </html>
