@@ -10,14 +10,12 @@
       color: green !important;
     }
 
+    /* Resetting to standard, uninhibited browser defaults */
     html, body {
       margin: 0;
       padding: 0;
       width: 100%;
       text-align: left;
-      /* Restores natural browser behavior across all mobile platforms */
-      -webkit-text-size-adjust: 100%;
-      text-size-adjust: 100%;
     }
 
     * {
@@ -25,34 +23,35 @@
       box-sizing: border-box;
     }
 
-    /* Standard layout spacing */
-    .wrapper {
+    /* Standard content container with natural scrolling */
+    .main-content-area {
       padding: 15px;
       max-width: 800px;
       margin: 0 auto;
+      display: block;
     }
 
-    /* ADJUST FONT SIZE HERE: Change 18px to a different number if it is still too big or small */
-    .archive-text div, 
-    .archive-text p, 
-    .archive-text li, 
-    .archive-text a {
-      font-size: 18px !important; 
-      line-height: 1.5 !important;
-      text-align: left !important;
+    /* Controls the text size globally for standard elements */
+    .main-content-area div, 
+    .main-content-area p, 
+    .main-content-area li, 
+    .main-content-area a {
+      font-size: 16px; 
+      line-height: 1.5;
+      text-align: left;
     }
 
-    .archive-text h1 { 
-      font-size: 26px !important; 
+    .main-content-area h1 { 
+      font-size: 24px; 
       margin-bottom: 0;
-      text-align: left !important;
+      text-align: left;
     }
     
-    .archive-text h2 { 
-      font-size: 20px !important; 
+    .main-content-area h2 { 
+      font-size: 18px; 
       margin-top: 1.5rem; 
       margin-bottom: 0;
-      text-align: left !important;
+      text-align: left;
     }
 
     ul {
@@ -70,7 +69,7 @@
 </head>
 <body>
 
-<div class="wrapper archive-text">
+<div class="main-content-area">
 
   <!-- HEADER -->
   <div>
