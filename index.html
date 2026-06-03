@@ -15,9 +15,9 @@
       padding: 0;
       width: 100%;
       text-align: left;
-      /* Prevents browsers from shrinking text size down automatically */
-      -webkit-text-size-adjust: 100% !important;
-      text-size-adjust: 100% !important;
+      /* Restores natural browser behavior across all mobile platforms */
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
     }
 
     * {
@@ -25,46 +25,44 @@
       box-sizing: border-box;
     }
 
-    /* Target container to isolate and force text sizes explicitly */
-    .mobile-container {
-      width: 100%;
-      padding: 20px;
-      display: block;
-      float: left;
-      text-align: left;
+    /* Standard layout spacing */
+    .wrapper {
+      padding: 15px;
+      max-width: 800px;
+      margin: 0 auto;
     }
 
-    /* Force larger, crisp paragraph/div text size */
-    .mobile-container div, 
-    .mobile-container p, 
-    .mobile-container li, 
-    .mobile-container a {
-      font-size: 22px !important;
-      line-height: 1.6 !important;
+    /* ADJUST FONT SIZE HERE: Change 18px to a different number if it is still too big or small */
+    .archive-text div, 
+    .archive-text p, 
+    .archive-text li, 
+    .archive-text a {
+      font-size: 18px !important; 
+      line-height: 1.5 !important;
       text-align: left !important;
     }
 
-    /* Scale headings proportionally to the large base text */
-    .mobile-container h1 { 
-      font-size: 32px !important; 
-      margin-top: 0; 
+    .archive-text h1 { 
+      font-size: 26px !important; 
+      margin-bottom: 0;
       text-align: left !important;
     }
     
-    .mobile-container h2 { 
-      font-size: 26px !important; 
-      margin-top: 1.8rem; 
+    .archive-text h2 { 
+      font-size: 20px !important; 
+      margin-top: 1.5rem; 
+      margin-bottom: 0;
       text-align: left !important;
     }
 
     ul {
-      padding-left: 25px;
+      padding-left: 20px;
       margin-top: 5px;
       text-align: left;
     }
     
     li {
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       word-wrap: break-word;
     }
   </style>
@@ -72,11 +70,11 @@
 </head>
 <body>
 
-<div class="mobile-container">
+<div class="wrapper archive-text">
 
   <!-- HEADER -->
   <div>
-    <h1 style="margin-bottom: 0;">THEPLOTDICKENSARCHIVE</h1>
+    <h1>THEPLOTDICKENSARCHIVE</h1>
     <div>Brian Dickens is a singer, songwriter and guitarist from Massachusetts.</div>
     <div>Listen to the albums on Bandcamp:</div>
     <div>
@@ -93,7 +91,7 @@
   <!-- HEADER -->
 
   <div>
-    <h2 style="margin-bottom: 0;">My next shows are:</h2>
+    <h2>My next shows are:</h2>
     <ul>
       <li>Sunday, June 28, 2026 with Maki Matsui at the Lady Killigrew Cafe in Montague, MA. 5PM.</li>
       <li>Thursday, July 30, 2026 at Winchendon Historical Society Porch Nights in Winchendon, MA.</li>
@@ -101,11 +99,11 @@
   </div>
 
   <div>
-    <h2 style="margin-bottom: 0;">Archival Content</h2>
+    <h2>Archival Content</h2>
   </div>
 
   <div>
-    <h2 style="margin-bottom: 0;">2026 06 01</h2>
+    <h2>2026 06 01</h2>
     <div>Double header starting at the Marigold in Brattleboro.</div>
     <ul>
       <li><a href="https://youtu.be/vZWIn3dPOxg">Video here</a>. Songs played: Skippy, Hedge My Bets</li>
@@ -117,7 +115,7 @@
   </div>
 
   <div>
-    <h2 style="margin-bottom: 0;">2026 05 28</h2>
+    <h2>2026 05 28</h2>
     <div>Dropped into <a href="https://www.incandescentbrewing.com/events">Incandescent Brewing Co</a> in Bernardston, MA.</div>
     <div>Their open mic is every 4th/last Thursday.</div>
     <ul>
@@ -126,7 +124,7 @@
   </div>
 
   <div>
-    <h2 style="margin-bottom: 0;">2026 05 24</h2>
+    <h2>2026 05 24</h2>
     <div>Hosting a songwriters night at the <a href="https://thevoo.net/events/">Rendezvous</a> in Turners Falls, MA.</div>
     <div>Played alongside <a href="https://www.kaylablackburn.com/">Kayla Blackburn</a>, Maki Matsui and <a href="https://olivianied.com/">Olivia Nied</a>.</div>
     <ul>
@@ -136,7 +134,7 @@
   </div>
 
   <div>
-    <h2 style="margin-bottom: 0;">2026 05 21</h2>
+    <h2>2026 05 21</h2>
     <div>
       <a href="https://www.instagram.com/guilded_brick_music_club/">Guilded Brick Open Mic</a> in Holyoke, MA hosted by the inimitable Reuben Toadstool. <a href="https://www.instagram.com/reuben_toadstool/">Link to Reuben's Instagram</a>.
     </div>
@@ -150,7 +148,7 @@
   </div>
 
   <div>
-    <h2 style="margin-bottom: 0;">2026 05 19</h2>
+    <h2>2026 05 19</h2>
     <div>Tuesday Night Soundbites at Sawa Asian Cuisine in Gardner, MA.</div>
     <div>Hosted by Franco O'Malley.</div>
     <div><a href="https://www.instagram.com/soundbitesevents/">Link to the Franco/Soundbites Instagram.</a></div>
@@ -161,7 +159,7 @@
   </div>
 
   <div>
-    <h2 style="margin-bottom: 0;">2026 05 05</h2>
+    <h2>2026 05 05</h2>
     <div>Played at lunchtime for Greenfield Community College with <a href="https://www.instagram.com/carlylara_/">Carly Lara</a>, <a href="https://www.hazelbasilmusic.com/">Hazel Basil</a> and <a href="https://olivianied.com/">Olivia Nied</a>.</div>
     <ul>
       <li><a href="https://drive.google.com/file/d/1OyLw7lVovD-VUfE-K5TkNLzuvir2YSx2/view?usp=sharing">Flyer photo</a>.</li>
@@ -170,13 +168,13 @@
   </div>
 
   <div>
-    <h2 style="margin-bottom: 0;">2026 04 10</h2>
+    <h2>2026 04 10</h2>
     <div>I played at the <a href="https://marigold.org/">Marigold</a> in Brattleboro, VT with Olivia Nied.</div>
     <div>I made an awesome flyer for it, I think. <a href="https://drive.google.com/file/d/1EBUgikKsjZxpD3jsR-bLvooLYTyBmBOi/view?usp=sharing">link here</a>.</div>
   </div>
 
   <div>
-    <h2 style="margin-bottom: 0;">2026 04 08</h2>
+    <h2>2026 04 08</h2>
     <div>Played the <a href="https://www.buttonballbarn.com/">Buttonball Barn</a> open mic in Egremont, MA.</div>
     <div>It is a very cool, important venue. Their website is linked above. See a show there.</div>
     <ul>
@@ -185,7 +183,7 @@
   </div>
 
   <div>
-    <h2 style="margin-bottom: 0;">2026 03 30</h2>
+    <h2>2026 03 30</h2>
     <div>Monday night open mic at <a href="https://marigold.org/">Marigold</a> in Brattleboro.</div>
     <div>Here's their <a href="https://slotted.co/rivergardenopenmic?embed=1">sign up link</a>, it's a great time.</div>
     <ul>
@@ -194,7 +192,7 @@
   </div>
 
   <div>
-    <h2 style="margin-bottom: 0;">2026 03 26</h2>
+    <h2>2026 03 26</h2>
     <div>The Fitzpatrick Collaborative in Pepperell, MA.</div>
     <div>Hosted by Alyssa Vautier and the collaborative. <a href="https://drive.google.com/file/d/1bmuHfL5SS5Nq6FQsb_TM2G5kV51k_Wm5/view?usp=sharing">Show flyer photo</a>.</div>
     <div>There was very high quality video taken by the wonderful Dante Hecker.</div>
