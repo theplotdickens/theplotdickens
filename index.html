@@ -10,11 +10,21 @@
       color: green !important;
     }
 
+    html, body {
+      /* touch-action: none instructs Android Chrome directly to disable all browser-level zooming and panning gestures */
+      touch-action: none; 
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+    }
+
     html {
-      font-size: 100%; 
-      /* Prevents iOS Safari and Alternative Mobile Browsers from automatically shrinking text sizes */
-      -webkit-text-size-adjust: none;
-      text-size-adjust: none;
+      font-size: 16px; 
+      /* Hard-kills text autosizing algorithms in Chrome, Android Browser, and Safari */
+      -webkit-text-size-adjust: none !important;
+      -moz-text-size-adjust: none !important;
+      text-size-adjust: none !important;
     }
 
     * {
@@ -25,22 +35,15 @@
     body {
       text-align: left;
       line-height: 1.5;
-      padding: 15px;
-      margin: 0 auto;
-      max-width: 800px;
-      /* Using viewport width units (vw) ensures the font physically scales up relative to the phone screen width */
-      font-size: 4.5vw; 
+      padding: 20px;
+      overflow-y: auto; /* Re-enables normal vertical scrolling since touch-action: none turns it off */
+      
+      /* Explicitly forces the text size to be large based on pixels, bypassing relative scaling bugs */
+      font-size: 20px !important; 
     }
 
-    /* Media query to make sure the text size doesn't become comically huge on a desktop monitor */
-    @media screen and (min-width: 600px) {
-      body {
-        font-size: 18px;
-      }
-    }
-
-    h1 { font-size: 1.8rem; }
-    h2 { font-size: 1.4rem; margin-top: 1.5rem; }
+    h1 { font-size: 28px !important; margin-top: 0; }
+    h2 { font-size: 22px !important; margin-top: 1.5rem; }
 
     ul {
       padding-left: 20px;
@@ -188,22 +191,19 @@
   </ul>
 </div>
 
-<!-- JavaScript script explicitly intercepts and blocks multi-touch pinch gestures -->
+<!-- JavaScript fallback script to explicitly block multi-touch gesture listeners on Android Chrome -->
 <script>
-  document.addEventListener('touchmove', function (event) {
-    if (event.scale !== undefined && event.scale !== 1) { 
-      event.preventDefault(); 
+  document.body.addEventListener('touchstart', function(e) {
+    if (e.touches.length > 1) {
+      e.preventDefault();
     }
   }, { passive: false });
 
-  let lastTouchEnd = 0;
-  document.addEventListener('touchend', function (event) {
-    let now = (new Date()).getTime();
-    if (now - lastTouchEnd <= 300) {
-      event.preventDefault();
+  document.body.addEventListener('touchmove', function(e) {
+    if (e.touches.length > 1) {
+      e.preventDefault();
     }
-    lastTouchEnd = now;
-  }, false);
+  }, { passive: false });
 </script>
 
 </body>
