@@ -4,47 +4,63 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>THEPLOTDICKENSARCHIVE</title>
   <style>
-    a[href], a:link, a:visited {
-      color: green !important;
-    }
-    html, body {
+    /* Absolute hardware lock against mobile text autosizing and font boosting */
+    *, html, body, div, p, li, a, h1, h2, h4 {
       -webkit-text-size-adjust: 100% !important;
       text-size-adjust: 100% !important;
+      -ms-text-size-adjust: 100% !important;
+      max-height: 999999px !important;
+    }
+
+    html, body {
       font-family: Arial, sans-serif;
       line-height: 1.5;
       padding: 0;
       margin: 0;
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden;
     }
+
     .page-wrapper {
       width: 100%;
       max-width: 100vw;
       box-sizing: border-box;
       padding: 15px;
     }
-    /* Lock base text to viewport width on small screens, fallback to 16px on desktop */
-    body, div, p, li, a, h4 {
-      font-size: 4.2vw !important;
+
+    a[href], a:link, a:visited {
+      color: green !important;
     }
+
+    /* Dynamic Viewport sizing with a hard pixel floor forces the browser to resist shrinking on refresh */
+    body, div, p, li, a, h4 {
+      font-size: calc(14px + 0.5dvvw) !important;
+    }
+
     h1 {
-      font-size: 6.5vw !important;
+      font-size: calc(20px + 1dvvw) !important;
       margin-bottom: 0;
     }
+
     h2 {
-      font-size: 5vw !important;
+      font-size: calc(16px + 0.5dvvw) !important;
       margin-top: 1.5rem;
       margin-bottom: 0;
     }
+
     ul {
       padding-left: 20px;
       margin-top: 5px;
     }
+
     li {
       margin-bottom: 8px;
       word-wrap: break-word;
     }
-    
-    /* Desktop override so text doesn't become massive on huge monitors */
-    @media screen and (min-width: 480px) {
+
+    /* Desktop fallback to ensure text sizes stay normal on larger monitors */
+    @media screen and (min-width: 768px) {
       body, div, p, li, a, h4 { font-size: 16px !important; }
       h1 { font-size: 24px !important; }
       h2 { font-size: 18px !important; }
