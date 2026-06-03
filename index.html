@@ -4,63 +4,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>THEPLOTDICKENSARCHIVE</title>
   <style>
-    /* Force the mobile viewport engine to completely disable automatic text autosizing */
-    html {
-      -webkit-text-size-adjust: 100% !important;
-      text-size-adjust: 100% !important;
-      width: 100%;
-      height: 100%;
-      overflow: hidden; /* Stops the browser from calculating total page height on refresh */
-    }
-    
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.5;
+    html, body {
       margin: 0;
       padding: 0;
       width: 100%;
-      height: 100%;
+      font-family: Arial, sans-serif;
+      line-height: 1.5;
+      background-color: #ffffff;
       -webkit-text-size-adjust: 100% !important;
       text-size-adjust: 100% !important;
     }
 
-    /* Create an independent scrolling wrapper. The browser treats this container as a single static screen box, killing the refresh-shrink bug permanently. */
+    /* The Ultimate Fix: Isolated Component Tracks break the font-boosting calculation completely */
     .page-wrapper {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
+      display: grid;
+      grid-template-columns: 100%;
+      row-gap: 1.5rem;
       padding: 15px;
       box-sizing: border-box;
-      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Isolate every single child block as an independent, un-scalable grid item */
+    .page-wrapper > * {
+      min-width: 0;
     }
 
     a[href], a:link, a:visited {
       color: green !important;
     }
 
-    /* Fixed pixel rules that cannot be mathematically modified by mobile engines */
+    /* Hardcoded precise pixel locks */
     body, div, p, li, a, h4 {
       font-size: 16px !important;
     }
 
     h1 {
       font-size: 24px !important;
-      margin-bottom: 0;
+      margin: 0 !important;
     }
 
     h2 {
       font-size: 18px !important;
-      margin-top: 1.5rem;
-      margin-bottom: 0;
+      margin: 0 !important;
     }
 
     ul {
       padding-left: 20px;
-      margin-top: 5px;
+      margin: 5px 0 0 0;
     }
 
     li {
@@ -68,13 +58,12 @@
       word-wrap: break-word;
     }
 
-    .img-container {
+    .img-box {
       width: 100%;
       max-width: 220px;
-      margin-bottom: 15px;
     }
 
-    .img-container img {
+    .img-box img {
       display: block;
       width: 100%;
       height: auto;
@@ -85,7 +74,7 @@
 
 <div class="page-wrapper">
 
-  <div class="img-container">
+  <div class="img-box">
     <img src="https://raw.githubusercontent.com/theplotdickens/theplotdickens/main/photo%20of%20me%20at%20bridge.JPG" alt="Brian Dickens at the bridge">
   </div>
   
@@ -108,6 +97,7 @@
     <p></p>
     <h2>Last updated 2026 06 02.</h2>
   </div>
+
   <div>
     <h2>My next shows are:</h2>
     <ul>
